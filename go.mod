@@ -1,4 +1,4 @@
-module github.com/aldoger/tui-audio-player
+module github.com/aldoger/audiogo
 
 go 1.24.11
 
