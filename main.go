@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -31,9 +32,6 @@ func listMusic(path string) ([]os.DirEntry, error) {
 		".mp3":  true,
 		".wav":  true,
 		".flac": true,
-		".aac":  true,
-		".ogg":  true,
-		".m4a":  true,
 	}
 
 	var musicFiles []os.DirEntry
@@ -64,7 +62,7 @@ func main() {
 
 	Home, err := os.UserHomeDir()
 	if err != nil {
-		MyLogger.Error(err.Error())
+		log.Fatal(err.Error())
 		os.Exit(1)
 	}
 
@@ -72,24 +70,24 @@ func main() {
 
 	result, err := dirExist(MusicDir)
 	if err != nil {
-		MyLogger.Error(err.Error())
+		log.Fatal(err.Error())
 		os.Exit(1)
 	}
 
 	if !result {
-		MyLogger.Error(err.Error())
+		log.Fatal(err.Error())
 		os.Exit(1)
 	}
 
 	musicFiles, err := listMusic(MusicDir)
 	if err != nil {
-		MyLogger.Error(err.Error())
+		log.Fatal(err.Error())
 		os.Exit(1)
 	}
 
 	p := tea.NewProgram(initialModel(musicFiles))
 	if _, err := p.Run(); err != nil {
-		MyLogger.Error("Error: %s", err.Error())
+		log.Fatalf("Error: %s", err.Error())
 		os.Exit(1)
 	}
 
