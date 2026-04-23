@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gopxl/beep"
 	"github.com/gopxl/beep/v2/mp3"
 	"github.com/gopxl/beep/v2/speaker"
 )
@@ -24,11 +25,11 @@ func (ap *AudioPlayer) Play(musicFile string) {
 	defer streamer.Close()
 
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second))
-	
+
 	done := make(chan bool)
-	speaker.Play(beep.Seq(streamer, beep.Callback(func () {
+	speaker.Play(beep.Seq(streamer, beep.Callback(func() {
 		done <- true
 	})))
 
-	<- done
+	<-done
 }
