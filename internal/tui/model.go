@@ -1,7 +1,10 @@
-package main
+package tui
 
 import (
 	"os"
+
+	"github.com/aldoger/audiogo/internal/config"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
@@ -10,15 +13,19 @@ type model struct {
 	choices    []os.DirEntry
 	cursor     int
 	selected   map[int]struct{}
-	musicQueue MusicQueue
+	musicQueue config.MusicQueue
 }
 
-func initialModel(musicFiles []os.DirEntry) model {
+func InitialModel(musicFiles []os.DirEntry) model {
 	return model{
 		mode:       viewMenu,
 		options:    []string{"add", "play", "list", "stop", "resume", "back", "next"},
 		choices:    musicFiles,
 		selected:   make(map[int]struct{}),
-		musicQueue: NewMusicQueue(),
+		musicQueue: config.NewMusicQueue(),
 	}
+}
+
+func (model) Init() tea.Cmd {
+	return nil
 }

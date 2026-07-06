@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"log"
@@ -24,5 +24,4 @@ func (ap *AudioPlayer) Play(musicFile string) {
 	defer streamer.Close()
 
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second))
-
 }
