@@ -21,10 +21,6 @@ require (
 	github.com/ebitengine/oto/v3 v3.3.2 // indirect
 	github.com/ebitengine/purego v0.8.0 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
-<<<<<<< HEAD
-	github.com/gopxl/beep/v2 v2.1.1
-=======
->>>>>>> 0fac57d4359b92bbdab3c81761b1a7effb8fa035
 	github.com/hajimehoshi/go-mp3 v0.3.4 // indirect
 	github.com/lucasb-eyer/go-colorful v1.3.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
