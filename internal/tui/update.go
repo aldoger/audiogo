@@ -15,9 +15,10 @@ const (
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
-	// ===============================
-	// HANDLE CUSTOM MESSAGE
-	// ===============================
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.height = msg.Height
+
 	case autoBackMsg:
 		m.mode = viewMenu
 		return m, nil
@@ -25,7 +26,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch m.mode {
 
-		// ===== MENU MODE =====
 		case viewMenu:
 			switch msg.String() {
 
@@ -47,13 +47,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case ADD:
 					m.mode = viewAddMusic
 					m.cursor = 0
+
 				case LIST:
 					m.mode = viewMusicList
 					return m, autoBackCmd()
 				}
 			}
 
-		// ===== ADD MUSIC MODE =====
 		case viewAddMusic:
 			switch msg.String() {
 

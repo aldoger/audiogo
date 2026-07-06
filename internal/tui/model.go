@@ -8,6 +8,9 @@ import (
 )
 
 type model struct {
+	width  int
+	height int
+
 	mode       viewMode
 	options    []string
 	choices    []os.DirEntry

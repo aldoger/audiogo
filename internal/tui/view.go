@@ -11,65 +11,80 @@ const (
 )
 
 func (m model) View() string {
-	switch m.mode {
+	var content string
 
+	switch m.mode {
 	case viewMenu:
-		return m.menuView()
+		content = m.menuView()
 
 	case viewAddMusic:
-		return m.addMusicView()
+		content = m.addMusicView()
 
 	case viewMusicList:
-		return m.listMusicView()
+		content = m.listMusicView()
 	}
 
-	return ""
+	return docStyle.Render(content)
 }
 
 func (m model) menuView() string {
-	s := "Choose option:\n\n"
+	s := titleStyle.Render("Choose Option")
+	s += "\n\n"
 
 	for i, option := range m.options {
-		cursor := " "
-		if m.cursor == i {
-			cursor = ">"
+		if i == m.cursor {
+			s += selectedStyle.Render("> " + option)
+		} else {
+			s += normalStyle.Render("  " + option)
 		}
-		s += fmt.Sprintf("%s %s\n", cursor, option)
+		s += "\n"
 	}
 
-	s += "\nEnter to select • q to quit\n"
+	s += "\n"
+	s += helpStyle.Render("↑/↓ Move • Enter Select • q Quit")
+
 	return s
 }
 
 func (m model) addMusicView() string {
-	s := "Add music to queue:\n\n"
+	s := titleStyle.Render("Add Music")
+	s += "\n\n"
 
 	for i, file := range m.choices {
-		cursor := " "
-		if m.cursor == i {
-			cursor = ">"
-		}
+		name := file.Name()
 
-		s += fmt.Sprintf("%s %s\n", cursor, file.Name())
+		if i == m.cursor {
+			s += selectedStyle.Render("> " + name)
+		} else {
+			s += normalStyle.Render("  " + name)
+		}
+		s += "\n"
 	}
 
-	s += "\nPress Enter: add music\nPress b: back\n"
+	s += "\n"
+	s += helpStyle.Render("Enter Add • b Back")
+
 	return s
 }
 
 func (m model) listMusicView() string {
-	s := "List music in queue:\n\n"
+	s := titleStyle.Render("Music Queue")
+	s += "\n\n"
 
-	musicList := m.musicQueue.ListMusicInQueue()
+	queue := m.musicQueue.ListMusicInQueue()
 
-	if len(musicList) == 0 {
-		s += "(queue is empty)\n"
+	if len(queue) == 0 {
+		s += helpStyle.Render("(queue is empty)")
 		return s
 	}
 
-	for i, name := range musicList {
-		s += fmt.Sprintf("%d. %s\n", i+1, name)
+	for i, song := range queue {
+		s += normalStyle.Render(fmt.Sprintf("%2d. %s", i+1, song))
+		s += "\n"
 	}
+
+	s += "\n"
+	s += helpStyle.Render("Returning to menu...")
 
 	return s
 }
