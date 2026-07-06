@@ -12,6 +12,10 @@ import (
 
 type AudioPlayer struct{}
 
+func NewAudioPlayer() AudioPlayer {
+	return AudioPlayer{}
+}
+
 func (ap *AudioPlayer) Play(musicFile string) {
 	f, err := os.Open(musicFile)
 	if err != nil {
