@@ -26,7 +26,7 @@ func DirExist() (string, error) {
 	return dirPath, nil
 }
 
-func ListMusic(path string) ([]os.DirEntry, error) {
+func ListMusic(path string) ([]string, error) {
 	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func ListMusic(path string) ([]os.DirEntry, error) {
 		".flac": true,
 	}
 
-	var musicFiles []os.DirEntry
+	var musicFiles []string
 
 	for _, file := range files {
 		if file.IsDir() {
@@ -47,7 +47,7 @@ func ListMusic(path string) ([]os.DirEntry, error) {
 
 		ext := strings.ToLower(filepath.Ext(file.Name()))
 		if audioExt[ext] {
-			musicFiles = append(musicFiles, file)
+			musicFiles = append(musicFiles, filepath.Join(path, file.Name()))
 		}
 	}
 

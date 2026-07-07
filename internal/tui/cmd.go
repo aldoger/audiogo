@@ -9,7 +9,7 @@ import (
 type autoBackMsg struct{}
 
 func autoBackCmd() tea.Cmd {
-	return tea.Tick(time.Second, func(time.Time) tea.Msg {
+	return tea.Tick(time.Second*3, func(time.Time) tea.Msg {
 		return autoBackMsg{}
 	})
 }

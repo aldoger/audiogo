@@ -51,7 +51,7 @@ func (m model) addMusicView() string {
 	s += "\n\n"
 
 	for i, file := range m.choices {
-		name := file.Name()
+		name := file
 
 		if i == m.cursor {
 			s += selectedStyle.Render("> " + name)
@@ -59,6 +59,11 @@ func (m model) addMusicView() string {
 			s += normalStyle.Render("  " + name)
 		}
 		s += "\n"
+	}
+
+	if m.message != "" {
+		s += "\n"
+		s += selectedStyle.Render(m.message)
 	}
 
 	s += "\n"

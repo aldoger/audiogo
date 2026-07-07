@@ -3,25 +3,13 @@ module github.com/aldoger/audiogo
 go 1.25.0
 
 require (
-	charm.land/bubbletea/v2 v2.0.7
-	charm.land/lipgloss/v2 v2.0.4
 	github.com/charmbracelet/bubbletea v1.3.10
+	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/beep/v2 v2.1.1
 )
 
 require (
-	github.com/atotto/clipboard v0.1.4 // indirect
-	github.com/charmbracelet/lipgloss v1.1.0 // indirect
-	github.com/charmbracelet/ultraviolet v0.0.0-20260525132238-948f4557a654 // indirect
-	github.com/charmbracelet/x/termios v0.1.1 // indirect
-	github.com/charmbracelet/x/windows v0.2.2 // indirect
-	github.com/sahilm/fuzzy v0.1.3 // indirect
-	golang.org/x/sync v0.20.0 // indirect
-)
-
-require (
-	charm.land/bubbles/v2 v2.1.1
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
 	github.com/charmbracelet/x/ansi v0.11.7 // indirect

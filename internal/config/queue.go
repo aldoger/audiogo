@@ -1,15 +1,11 @@
 package config
 
-import (
-	"os"
-)
-
 type NodeMusic struct {
-	Music         os.DirEntry
+	Music         string
 	NextNodeMusic *NodeMusic
 }
 
-func NewMusic(music os.DirEntry) *NodeMusic {
+func NewMusic(music string) *NodeMusic {
 	return &NodeMusic{
 		Music: music,
 	}
@@ -27,7 +23,7 @@ func NewMusicQueue() MusicQueue {
 	}
 }
 
-func (q *MusicQueue) Enqueue(music os.DirEntry) {
+func (q *MusicQueue) Enqueue(music string) {
 
 	newMusic := NewMusic(music)
 	if q.NodeMusicHead == nil {
@@ -40,10 +36,29 @@ func (q *MusicQueue) Enqueue(music os.DirEntry) {
 	q.NodeMusicTail = newMusic
 }
 
+func (q *MusicQueue) Dequeue() string {
+
+	music := q.NodeMusicHead.Music
+
+	currNode := q.NodeMusicHead
+
+	if currNode == q.NodeMusicTail {
+		currNode = nil
+		q.NodeMusicTail = nil
+		return music
+	}
+
+	q.NodeMusicHead = q.NodeMusicHead.NextNodeMusic
+
+	currNode = nil
+
+	return music
+}
+
 func (q *MusicQueue) ListMusicInQueue() []string {
 	var list []string
 	for curr := q.NodeMusicHead; curr != nil; curr = curr.NextNodeMusic {
-		list = append(list, curr.Music.Name())
+		list = append(list, curr.Music)
 	}
 	return list
 }

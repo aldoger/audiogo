@@ -1,8 +1,6 @@
 package tui
 
 import (
-	"os"
-
 	"github.com/aldoger/audiogo/internal/config"
 	"github.com/aldoger/audiogo/internal/service"
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,14 +12,15 @@ type model struct {
 
 	mode       viewMode
 	options    []string
-	choices    []os.DirEntry
+	choices    []string
 	cursor     int
+	message    string
 	player     service.AudioPlayer
 	selected   map[int]struct{}
 	musicQueue config.MusicQueue
 }
 
-func InitialModel(musicFiles []os.DirEntry) model {
+func InitialModel(musicFiles []string) model {
 	return model{
 		mode:       viewMenu,
 		options:    []string{"add", "play", "list", "stop", "resume", "back", "next"},

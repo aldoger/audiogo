@@ -1,6 +1,10 @@
 package tui
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	"fmt"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 const (
 	ADD    = "add"
@@ -51,6 +55,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case LIST:
 					m.mode = viewMusicList
 					return m, autoBackCmd()
+				case PLAY:
+
 				}
 			}
 
@@ -73,6 +79,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			case "enter":
 				m.musicQueue.Enqueue(m.choices[m.cursor])
+				m.message = fmt.Sprintf("%s added to queue!", m.choices[m.cursor])
 
 			case "q", "ctrl+c":
 				return m, tea.Quit
