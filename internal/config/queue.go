@@ -38,6 +38,10 @@ func (q *MusicQueue) Enqueue(music string) {
 
 func (q *MusicQueue) Dequeue() string {
 
+	if q.NodeMusicHead == nil && q.NodeMusicTail == nil {
+		return ""
+	}
+
 	music := q.NodeMusicHead.Music
 
 	currNode := q.NodeMusicHead

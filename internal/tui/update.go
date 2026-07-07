@@ -55,8 +55,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case LIST:
 					m.mode = viewMusicList
 					return m, autoBackCmd()
-				case PLAY:
 
+				case PLAY:
+					if m.musicQueue.Dequeue() == "" {
+						m.message = fmt.Sprintf("No music in queue yet!!")
+						return m, nil
+					}
+					m.player.Play(m.musicQueue.Dequeue())
 				}
 			}
 

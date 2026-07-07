@@ -33,9 +33,7 @@ func ListMusic(path string) ([]string, error) {
 	}
 
 	audioExt := map[string]bool{
-		".mp3":  true,
-		".wav":  true,
-		".flac": true,
+		".mp3": true,
 	}
 
 	var musicFiles []string
