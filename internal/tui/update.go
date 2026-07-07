@@ -10,7 +10,7 @@ const (
 	ADD    = "add"
 	LIST   = "list"
 	PLAY   = "play"
-	STOP   = "stop"
+	PAUSE  = "pause"
 	RESUME = "resume"
 	BACK   = "back"
 	NEXT   = "next"
@@ -58,10 +58,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				case PLAY:
 					if m.musicQueue.Dequeue() == "" {
-						m.message = fmt.Sprintf("No music in queue yet!!")
+						m.message = WarningMessage{Text: "No music in queue yet!!"}
 						return m, nil
 					}
+					m.message = InfoMessage{Text: "Playing"}
 					m.player.Play(m.musicQueue.Dequeue())
+
+				case PAUSE:
+					m.message = InfoMessage{Text: "Music pause!"}
+					m.player.Pause()
+
+				case RESUME:
+					m.message = InfoMessage{Text: "Resume..."}
+					m.player.Resume()
 				}
 			}
 
@@ -71,6 +80,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "b":
 				m.mode = viewMenu
 				m.cursor = 0
+				m.message = nil
 
 			case "up", "k":
 				if m.cursor > 0 {
@@ -84,7 +94,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			case "enter":
 				m.musicQueue.Enqueue(m.choices[m.cursor])
-				m.message = fmt.Sprintf("%s added to queue!", m.choices[m.cursor])
+				msg := fmt.Sprintf("%s added to queue!", m.choices[m.cursor])
+				m.message = SelectedMessage{Text: msg}
 
 			case "q", "ctrl+c":
 				return m, tea.Quit

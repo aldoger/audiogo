@@ -14,7 +14,7 @@ type model struct {
 	options    []string
 	choices    []string
 	cursor     int
-	message    string
+	message    ModelMessage
 	player     service.AudioPlayer
 	selected   map[int]struct{}
 	musicQueue config.MusicQueue
@@ -23,7 +23,7 @@ type model struct {
 func InitialModel(musicFiles []string) model {
 	return model{
 		mode:       viewMenu,
-		options:    []string{"add", "play", "list", "stop", "resume", "back", "next"},
+		options:    []string{"add", "play", "list", "pause", "resume", "back", "next"},
 		choices:    musicFiles,
 		player:     service.NewAudioPlayer(),
 		selected:   make(map[int]struct{}),

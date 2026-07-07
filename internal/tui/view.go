@@ -40,9 +40,9 @@ func (m model) menuView() string {
 		s += "\n"
 	}
 
-	if m.message != "" {
+	if m.message != nil {
 		s += "\n"
-		s += warningStyle.Render(m.message)
+		s += m.message.Render()
 		s += "\n"
 	}
 
@@ -67,9 +67,9 @@ func (m model) addMusicView() string {
 		s += "\n"
 	}
 
-	if m.message != "" {
+	if m.message != nil {
 		s += "\n"
-		s += selectedStyle.Render(m.message)
+		s += m.message.Render()
 		s += "\n"
 	}
 
