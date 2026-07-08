@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 
+	"github.com/aldoger/audiogo/internal/utils"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -57,6 +58,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "enter":
 				switch m.options[m.cursor] {
 				case ADD:
+					// check for another music if added in directory
+					dirPath, _ := utils.DirExist()
+					checkMusic, _ := utils.ListMusic(dirPath)
+					m.choices = &checkMusic
+
 					m.mode = viewAddMusic
 					m.cursor = 0
 
@@ -98,13 +104,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 			case "down", "j":
-				if m.cursor < len(m.choices)-1 {
+				if m.cursor < len(*m.choices)-1 {
 					m.cursor++
 				}
 
 			case "enter":
-				m.musicQueue.Enqueue(m.choices[m.cursor])
-				msg := fmt.Sprintf("%s added to queue!", m.choices[m.cursor])
+				m.musicQueue.Enqueue((*m.choices)[m.cursor])
+				msg := fmt.Sprintf("%s added to queue!", (*m.choices)[m.cursor])
 				m.message = SelectedMessage{Text: msg}
 
 			case "q", "ctrl+c":

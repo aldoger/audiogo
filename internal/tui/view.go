@@ -67,7 +67,7 @@ func (m model) addMusicView() string {
 	s := titleStyle.Render("Add Music")
 	s += "\n\n"
 
-	for i, file := range m.choices {
+	for i, file := range *m.choices {
 		name := file
 
 		if i == m.cursor {
