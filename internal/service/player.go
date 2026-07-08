@@ -52,6 +52,10 @@ func (ap *AudioPlayer) Play(file string) error {
 	return nil
 }
 
+func (ap *AudioPlayer) Done() <-chan bool {
+	return ap.done
+}
+
 func (ap *AudioPlayer) Pause() {
 	speaker.Lock()
 	ap.ctrl.Paused = true

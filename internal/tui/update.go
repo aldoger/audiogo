@@ -27,6 +27,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.mode = viewMenu
 		return m, nil
 
+	case SongFinishedMsg:
+		next := m.musicQueue.Dequeue()
+		if next == "" {
+			m.message = WarningMessage{Text: "No more music in queue"}
+			return m, nil
+		}
+		m.player.Play(next)
+		return m, waitForSong(&m.player)
+
 	case tea.KeyMsg:
 		if m.mode == viewSplash {
 			m.mode = viewMenu
@@ -62,12 +71,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, autoBackCmd()
 
 				case PLAY:
-					if m.musicQueue.Dequeue() == "" {
+					music := m.musicQueue.Dequeue()
+					if music == "" {
 						m.message = WarningMessage{Text: "No music in queue yet!!"}
 						return m, nil
 					}
-					m.message = InfoMessage{Text: "Playing"}
-					m.player.Play(m.musicQueue.Dequeue())
+					m.message = InfoMessage{Text: "Playing..."}
+					m.player.Play(music)
+					return m, waitForSong(&m.player)
 
 				case PAUSE:
 					m.message = InfoMessage{Text: "Music pause!"}

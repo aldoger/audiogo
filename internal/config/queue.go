@@ -42,6 +42,13 @@ func (q *MusicQueue) Dequeue() string {
 		return ""
 	}
 
+	if q.NodeMusicHead == q.NodeMusicTail {
+		music := q.NodeMusicHead.Music
+		q.NodeMusicHead = nil
+		q.NodeMusicTail = nil
+		return music
+	}
+
 	music := q.NodeMusicHead.Music
 
 	currNode := q.NodeMusicHead
