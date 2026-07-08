@@ -12,7 +12,6 @@ const (
 	PLAY   = "play"
 	PAUSE  = "pause"
 	RESUME = "resume"
-	BACK   = "back"
 	NEXT   = "next"
 )
 

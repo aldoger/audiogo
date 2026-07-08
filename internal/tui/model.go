@@ -23,7 +23,7 @@ type model struct {
 func InitialModel(musicFiles []string) model {
 	return model{
 		mode:       viewMenu,
-		options:    []string{"add", "play", "list", "pause", "resume", "back", "next"},
+		options:    []string{"add", "play", "list", "pause", "resume", "next"},
 		choices:    musicFiles,
 		player:     service.NewAudioPlayer(),
 		selected:   make(map[int]struct{}),
