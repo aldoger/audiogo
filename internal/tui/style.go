@@ -1,6 +1,8 @@
 package tui
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+)
 
 type ModelMessage interface {
 	Render() string
@@ -39,6 +41,10 @@ func (m InfoMessage) Render() string {
 }
 
 var (
+	splashStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("#00FFFF"))
+
 	docStyle = lipgloss.NewStyle().
 			Margin(1, 2)
 

@@ -28,5 +28,4 @@ func main() {
 		log.Fatalf("Error: %s", err.Error())
 		os.Exit(1)
 	}
-
 }

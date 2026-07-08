@@ -1,30 +1,42 @@
 package tui
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+	"github.com/common-nighthawk/go-figure"
+)
+
+func titleHeader() string {
+	title := strings.TrimRight(figure.NewFigure("AUDIOGO", "larry3d", true).String(), "\n")
+	return splashStyle.Render(title)
+}
 
 type viewMode int
 
 const (
-	viewMenu viewMode = iota
+	viewSplash viewMode = iota
+	viewMenu
 	viewAddMusic
 	viewMusicList
 )
 
 func (m model) View() string {
-	var content string
+	header := lipgloss.PlaceHorizontal(m.width, lipgloss.Left, titleHeader())
 
+	var content string
 	switch m.mode {
 	case viewMenu:
 		content = m.menuView()
-
 	case viewAddMusic:
 		content = m.addMusicView()
-
 	case viewMusicList:
 		content = m.listMusicView()
 	}
 
-	return docStyle.Render(content)
+	body := docStyle.Render(content)
+	return header + "\n\n" + body
 }
 
 func (m model) menuView() string {

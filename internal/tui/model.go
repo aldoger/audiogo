@@ -31,6 +31,6 @@ func InitialModel(musicFiles []string) model {
 	}
 }
 
-func (model) Init() tea.Cmd {
+func (m model) Init() tea.Cmd {
 	return nil
 }
