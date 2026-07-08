@@ -10,6 +10,7 @@ import (
 const (
 	ADD    = "add"
 	LIST   = "list"
+	SEARCH = "search"
 	PLAY   = "play"
 	PAUSE  = "pause"
 	RESUME = "resume"
@@ -33,8 +34,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.message = WarningMessage{Text: "No more music in queue"}
 			return m, nil
 		}
-		m.player.Play(next)
-		return m, waitForSong(&m.player)
+		m.message = InfoMessage{Text: "Playing Next Music..."}
+		if err := m.player.Play(next); err != nil {
+			m.message = WarningMessage{Text: err.Error()}
+			return m, nil
+		}
+		return m, waitForSong(m.player)
 
 	case tea.KeyMsg:
 		switch m.mode {
@@ -77,8 +82,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						return m, nil
 					}
 					m.message = InfoMessage{Text: "Playing..."}
-					m.player.Play(music)
-					return m, waitForSong(&m.player)
+					if err := m.player.Play(music); err != nil {
+						m.message = WarningMessage{Text: err.Error()}
+						return m, nil
+					}
+					return m, waitForSong(m.player)
 
 				case PAUSE:
 					m.message = InfoMessage{Text: "Music pause!"}
@@ -87,6 +95,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case RESUME:
 					m.message = InfoMessage{Text: "Resume..."}
 					m.player.Resume()
+
+				case NEXT:
+					next := m.musicQueue.Dequeue()
+					if next == "" {
+						m.message = WarningMessage{Text: "No more music in queue"}
+						return m, nil
+					}
+					m.message = InfoMessage{Text: "Playing Next Music..."}
+					if err := m.player.Play(next); err != nil {
+						m.message = WarningMessage{Text: err.Error()}
+						return m, nil
+					}
+					return m, waitForSong(m.player)
 				}
 			}
 

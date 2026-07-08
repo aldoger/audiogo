@@ -10,13 +10,16 @@ import (
 )
 
 type AudioPlayer struct {
-	streamer beep.StreamSeekCloser
-	ctrl     *beep.Ctrl
-	done     chan bool
+	ctrl        *beep.Ctrl
+	mixer       *beep.Mixer
+	done        chan struct{}
+	initialized bool
 }
 
-func NewAudioPlayer() AudioPlayer {
-	return AudioPlayer{}
+func NewAudioPlayer() *AudioPlayer {
+	return &AudioPlayer{
+		mixer: &beep.Mixer{},
+	}
 }
 
 func (ap *AudioPlayer) Play(file string) error {
@@ -27,51 +30,70 @@ func (ap *AudioPlayer) Play(file string) error {
 
 	streamer, format, err := mp3.Decode(f)
 	if err != nil {
+		f.Close()
 		return err
 	}
 
-	ap.streamer = streamer
-	ap.done = make(chan bool)
+	if !ap.initialized {
+		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
-	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+		speaker.Play(ap.mixer)
+
+		ap.initialized = true
+	}
+
+	ap.done = make(chan struct{})
 
 	ap.ctrl = &beep.Ctrl{
 		Streamer: streamer,
-		Paused:   false,
 	}
 
-	speaker.Play(
+	speaker.Lock()
+
+	ap.mixer.Clear()
+
+	ap.mixer.Add(
 		beep.Seq(
 			ap.ctrl,
 			beep.Callback(func() {
-				ap.done <- true
+				close(ap.done)
 			}),
 		),
 	)
 
+	speaker.Unlock()
+
 	return nil
 }
 
-func (ap *AudioPlayer) Done() <-chan bool {
+func (ap *AudioPlayer) Done() <-chan struct{} {
 	return ap.done
 }
 
 func (ap *AudioPlayer) Pause() {
+	if ap.ctrl == nil {
+		return
+	}
+
 	speaker.Lock()
 	ap.ctrl.Paused = true
 	speaker.Unlock()
 }
 
 func (ap *AudioPlayer) Resume() {
+	if ap.ctrl == nil {
+		return
+	}
+
 	speaker.Lock()
 	ap.ctrl.Paused = false
 	speaker.Unlock()
 }
 
 func (ap *AudioPlayer) Stop() {
-	speaker.Clear()
+	speaker.Lock()
+	ap.mixer.Clear()
+	speaker.Unlock()
 
-	if ap.streamer != nil {
-		ap.streamer.Close()
-	}
+	ap.ctrl = nil
 }

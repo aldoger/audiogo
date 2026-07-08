@@ -15,7 +15,7 @@ type model struct {
 	choices    *[]string
 	cursor     int
 	message    ModelMessage
-	player     service.AudioPlayer
+	player     *service.AudioPlayer
 	selected   map[int]struct{}
 	musicQueue config.MusicQueue
 }
