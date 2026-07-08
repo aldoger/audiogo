@@ -16,8 +16,7 @@ func titleHeader() string {
 type viewMode int
 
 const (
-	viewSplash viewMode = iota
-	viewMenu
+	viewMenu viewMode = iota
 	viewAddMusic
 	viewMusicList
 )

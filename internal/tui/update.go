@@ -37,11 +37,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, waitForSong(&m.player)
 
 	case tea.KeyMsg:
-		if m.mode == viewSplash {
-			m.mode = viewMenu
-			return m, nil
-		}
-
 		switch m.mode {
 
 		case viewMenu:
