@@ -1,4 +1,4 @@
-package config
+package service
 
 type NodeMusic struct {
 	Music         string

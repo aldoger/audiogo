@@ -1,7 +1,6 @@
 package tui
 
 import (
-	"github.com/aldoger/audiogo/internal/config"
 	"github.com/aldoger/audiogo/internal/service"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -17,7 +16,7 @@ type model struct {
 	message    ModelMessage
 	player     *service.AudioPlayer
 	selected   map[int]struct{}
-	musicQueue config.MusicQueue
+	musicQueue service.MusicQueue
 }
 
 func InitialModel(musicFiles []string) model {
@@ -27,7 +26,7 @@ func InitialModel(musicFiles []string) model {
 		choices:    &musicFiles,
 		player:     service.NewAudioPlayer(),
 		selected:   make(map[int]struct{}),
-		musicQueue: config.NewMusicQueue(),
+		musicQueue: service.NewMusicQueue(),
 	}
 }
 
