@@ -22,10 +22,16 @@ const (
 )
 
 func (m model) View() string {
-	bodyHeight := max(20, m.height-6)
+	bodyHeight := max(10, m.height-6)
+
+	containerWidth := int(float64(m.width) * 0.6)
+
+	if containerWidth < 80 {
+		containerWidth = m.width
+	}
 
 	menuWidth := 30
-	rightWidth := m.width - menuWidth
+	rightWidth := containerWidth - menuWidth
 
 	mainHeight := bodyHeight - 8
 	helpHeight := 8
@@ -43,7 +49,7 @@ func (m model) View() string {
 	)
 
 	help := Box(
-		m.helpView(),
+		m.helpView(rightWidth, helpHeight),
 		rightWidth,
 		helpHeight,
 	)
@@ -54,10 +60,16 @@ func (m model) View() string {
 		help,
 	)
 
-	return lipgloss.JoinHorizontal(
+	content := lipgloss.JoinHorizontal(
 		lipgloss.Top,
 		menu,
 		right,
+	)
+
+	return lipgloss.PlaceHorizontal(
+		m.width,
+		lipgloss.Center,
+		content,
 	)
 }
 
@@ -106,17 +118,25 @@ func (m model) menuView() string {
 	return s
 }
 
-func (m model) helpView() string {
-	var s string
-	s += helpStyle.Render("↑/↓ Move")
-	s += "\n"
-	s += helpStyle.Render("Enter Select")
-	s += "\n"
-	s += helpStyle.Render("b Back")
-	s += "\n"
-	s += helpStyle.Render("q Quit")
+func (m model) helpView(width, height int) string {
+	s := lipgloss.JoinHorizontal(
+		lipgloss.Center,
+		helpStyle.Render("↑/↓ Move"),
+		" | ",
+		helpStyle.Render("Enter Select"),
+		" | ",
+		helpStyle.Render("b Back"),
+		" | ",
+		helpStyle.Render("q Quit"),
+	)
 
-	return s
+	return lipgloss.Place(
+		width-2,
+		height-2,
+		lipgloss.Center,
+		lipgloss.Center,
+		s,
+	)
 }
 
 func (m model) addMusicView() string {
