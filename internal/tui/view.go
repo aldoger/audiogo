@@ -95,7 +95,13 @@ func (m model) currentView(width, height int) string {
 		)
 
 	case viewMusicList:
-		return m.listMusicView()
+		return lipgloss.Place(
+			width-2,
+			height-2,
+			lipgloss.Center,
+			lipgloss.Center,
+			m.listMusicView(),
+		)
 
 	case viewPlayMusic:
 		return lipgloss.Place(
@@ -160,7 +166,7 @@ func (m model) playMusicView() string {
 
 	progress := 0.42 // 42%
 
-	barWidth := m.width - 18
+	barWidth := int(float64(m.width) * 0.4)
 	if barWidth < 10 {
 		barWidth = 10
 	}
@@ -171,7 +177,9 @@ func (m model) playMusicView() string {
 	bar += "╺"
 	bar += strings.Repeat("━", max(0, barWidth-filled-1))
 
-	s += fmt.Sprintf("1:23 %s 4:36", bar)
+	s += "1:23 / 4:36"
+	progressLine := fmt.Sprintf("%s", bar)
+	s += lipgloss.PlaceHorizontal(m.width, lipgloss.Center, progressLine)
 	s += "\n\n"
 
 	if m.player.IsPaused() {
@@ -180,8 +188,6 @@ func (m model) playMusicView() string {
 		s += helpStyle.Render("⏸ Pause")
 	}
 
-	s += "    "
-	s += helpStyle.Render("⏮ Prev")
 	s += "    "
 	s += helpStyle.Render("⏭ Next")
 
