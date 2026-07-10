@@ -23,7 +23,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	p := tea.NewProgram(tui.InitialModel(musicFiles))
+	p := tea.NewProgram(tui.InitialModel(&musicFiles))
 	if _, err := p.Run(); err != nil {
 		log.Fatalf("Error: %s", err.Error())
 		os.Exit(1)

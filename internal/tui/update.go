@@ -133,8 +133,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 			case "enter":
-				m.musicQueue.Enqueue((*m.choices)[m.mainCursor])
-				msg := fmt.Sprintf("%s added to queue!", (*m.choices)[m.mainCursor])
+				m.musicQueue.Enqueue((*m.choices)[m.mainCursor].Path)
+				msg := fmt.Sprintf("%s added to queue!", (*m.choices)[m.mainCursor].Title)
 				m.message = SelectedMessage{Text: msg}
 
 			case "q", "ctrl+c":

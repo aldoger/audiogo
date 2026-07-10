@@ -9,6 +9,11 @@ import (
 	"github.com/gopxl/beep/v2/speaker"
 )
 
+type MusicFile struct {
+	Title string
+	Path  string
+}
+
 type AudioPlayer struct {
 	ctrl        *beep.Ctrl
 	mixer       *beep.Mixer

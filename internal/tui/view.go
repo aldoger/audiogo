@@ -73,7 +73,13 @@ func (m model) currentView(width, height int) string {
 		)
 
 	case viewAddMusic:
-		return m.addMusicView()
+		return lipgloss.Place(
+			width-2,
+			height-2,
+			lipgloss.Center,
+			lipgloss.Center,
+			m.addMusicView(),
+		)
 
 	case viewMusicList:
 		return m.listMusicView()
@@ -119,7 +125,7 @@ func (m model) addMusicView() string {
 
 	if len(*m.choices) != 0 {
 		for i, file := range *m.choices {
-			name := file
+			name := file.Title
 
 			if i == m.mainCursor {
 				s += selectedStyle.Render("> " + name)

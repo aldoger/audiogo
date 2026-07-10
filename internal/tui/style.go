@@ -47,7 +47,7 @@ var (
 
 	boxStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#00FFFF")).
+			BorderForeground(lipgloss.Color("#6366F1")).
 			Padding(0, 1)
 
 	titleStyle = lipgloss.NewStyle().

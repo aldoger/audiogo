@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/aldoger/audiogo/internal/service"
 )
 
 func DirExist() (string, error) {
@@ -25,7 +27,7 @@ func DirExist() (string, error) {
 	return dirPath, nil
 }
 
-func ListMusic(path string) ([]string, error) {
+func ListMusic(path string) ([]service.MusicFile, error) {
 	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
@@ -35,7 +37,7 @@ func ListMusic(path string) ([]string, error) {
 		".mp3": true,
 	}
 
-	var musicFiles []string
+	var musicFiles []service.MusicFile
 
 	for _, file := range files {
 		if file.IsDir() {
@@ -44,7 +46,8 @@ func ListMusic(path string) ([]string, error) {
 
 		ext := strings.ToLower(filepath.Ext(file.Name()))
 		if audioExt[ext] {
-			musicFiles = append(musicFiles, filepath.Join(path, file.Name()))
+			music := service.MusicFile{Title: file.Name(), Path: filepath.Join(path, file.Name())}
+			musicFiles = append(musicFiles, music)
 		}
 	}
 

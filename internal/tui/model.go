@@ -11,7 +11,7 @@ type model struct {
 
 	mode       viewMode
 	options    []string
-	choices    *[]string
+	choices    *[]service.MusicFile
 	menuCursor int
 	mainCursor int
 	message    ModelMessage
@@ -20,11 +20,11 @@ type model struct {
 	musicQueue service.MusicQueue
 }
 
-func InitialModel(musicFiles []string) model {
+func InitialModel(musicFiles *[]service.MusicFile) model {
 	return model{
 		mode:       viewMenu,
 		options:    []string{"add", "play", "list", "pause", "resume", "next"},
-		choices:    &musicFiles,
+		choices:    musicFiles,
 		player:     service.NewAudioPlayer(),
 		selected:   make(map[int]struct{}),
 		musicQueue: service.NewMusicQueue(),
