@@ -45,8 +45,10 @@ var (
 			Bold(true).
 			Foreground(lipgloss.Color("#00FFFF"))
 
-	docStyle = lipgloss.NewStyle().
-			Margin(1, 2)
+	boxStyle = lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#00FFFF")).
+			Padding(0, 1)
 
 	titleStyle = lipgloss.NewStyle().
 			Bold(true).
@@ -66,5 +68,13 @@ var (
 			Bold(true).Foreground(lipgloss.Color("#b50a04"))
 
 	helpStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#626262"))
+			Foreground(lipgloss.Color("#9194a3"))
 )
+
+func Box(content string, width, height int) string {
+	style := boxStyle.
+		Width(width).
+		Height(height)
+
+	return style.Render(content)
+}

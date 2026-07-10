@@ -47,17 +47,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 
 			case "up", "k":
-				if m.cursor > 0 {
-					m.cursor--
+				if m.menuCursor > 0 {
+					m.menuCursor--
 				}
 
 			case "down", "j":
-				if m.cursor < len(m.options)-1 {
-					m.cursor++
+				if m.menuCursor < len(m.options)-1 {
+					m.menuCursor++
 				}
 
 			case "enter":
-				switch m.options[m.cursor] {
+				switch m.options[m.menuCursor] {
 				case ADD:
 					// check for another music if added in directory
 					dirPath, _ := utils.DirExist()
@@ -65,7 +65,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.choices = &checkMusic
 
 					m.mode = viewAddMusic
-					m.cursor = 0
 
 				case LIST:
 					m.mode = viewMusicList
@@ -111,7 +110,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg.String() {
 			case "b":
 				m.mode = viewMenu
-				m.cursor = 0
+				m.menuCursor = 0
 				m.message = nil
 			}
 
@@ -120,22 +119,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			case "b":
 				m.mode = viewMenu
-				m.cursor = 0
+				m.menuCursor = 0
 				m.message = nil
 
 			case "up", "k":
-				if m.cursor > 0 {
-					m.cursor--
+				if m.mainCursor > 0 {
+					m.mainCursor--
 				}
 
 			case "down", "j":
-				if m.cursor < len(*m.choices)-1 {
-					m.cursor++
+				if m.mainCursor < len(*m.choices)-1 {
+					m.mainCursor++
 				}
 
 			case "enter":
-				m.musicQueue.Enqueue((*m.choices)[m.cursor])
-				msg := fmt.Sprintf("%s added to queue!", (*m.choices)[m.cursor])
+				m.musicQueue.Enqueue((*m.choices)[m.mainCursor])
+				msg := fmt.Sprintf("%s added to queue!", (*m.choices)[m.mainCursor])
 				m.message = SelectedMessage{Text: msg}
 
 			case "q", "ctrl+c":

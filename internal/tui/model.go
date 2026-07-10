@@ -12,7 +12,8 @@ type model struct {
 	mode       viewMode
 	options    []string
 	choices    *[]string
-	cursor     int
+	menuCursor int
+	mainCursor int
 	message    ModelMessage
 	player     *service.AudioPlayer
 	selected   map[int]struct{}

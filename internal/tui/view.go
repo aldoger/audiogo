@@ -22,28 +22,73 @@ const (
 )
 
 func (m model) View() string {
-	header := lipgloss.PlaceHorizontal(m.width, lipgloss.Left, titleHeader())
+	bodyHeight := max(20, m.height-6)
 
-	var content string
+	menuWidth := 30
+	rightWidth := m.width - menuWidth
+
+	mainHeight := bodyHeight - 8
+	helpHeight := 8
+
+	menu := Box(
+		m.menuView(),
+		menuWidth,
+		bodyHeight,
+	)
+
+	main := Box(
+		m.currentView(rightWidth, mainHeight),
+		rightWidth,
+		mainHeight,
+	)
+
+	help := Box(
+		m.helpView(),
+		rightWidth,
+		helpHeight,
+	)
+
+	right := lipgloss.JoinVertical(
+		lipgloss.Left,
+		main,
+		help,
+	)
+
+	return lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		menu,
+		right,
+	)
+}
+
+func (m model) currentView(width, height int) string {
 	switch m.mode {
 	case viewMenu:
-		content = m.menuView()
-	case viewAddMusic:
-		content = m.addMusicView()
-	case viewMusicList:
-		content = m.listMusicView()
-	}
+		return lipgloss.Place(
+			width-2,
+			height-2,
+			lipgloss.Center,
+			lipgloss.Center,
+			titleHeader(),
+		)
 
-	body := docStyle.Render(content)
-	return header + "\n\n" + body
+	case viewAddMusic:
+		return m.addMusicView()
+
+	case viewMusicList:
+		return m.listMusicView()
+
+	default:
+		return ""
+	}
 }
 
 func (m model) menuView() string {
-	s := titleStyle.Render("Choose Option")
+	s := titleStyle.Render("Choose Operation")
 	s += "\n\n"
 
 	for i, option := range m.options {
-		if i == m.cursor {
+		if i == m.menuCursor {
 			s += selectedStyle.Render("> " + option)
 		} else {
 			s += normalStyle.Render("  " + option)
@@ -51,14 +96,19 @@ func (m model) menuView() string {
 		s += "\n"
 	}
 
-	if m.message != nil {
-		s += "\n"
-		s += m.message.Render()
-		s += "\n"
-	}
-
 	s += "\n"
-	s += helpStyle.Render("↑/↓ Move • Enter Select • q Quit")
+	return s
+}
+
+func (m model) helpView() string {
+	var s string
+	s += helpStyle.Render("↑/↓ Move")
+	s += "\n"
+	s += helpStyle.Render("Enter Select")
+	s += "\n"
+	s += helpStyle.Render("b Back")
+	s += "\n"
+	s += helpStyle.Render("q Quit")
 
 	return s
 }
@@ -71,7 +121,7 @@ func (m model) addMusicView() string {
 		for i, file := range *m.choices {
 			name := file
 
-			if i == m.cursor {
+			if i == m.mainCursor {
 				s += selectedStyle.Render("> " + name)
 			} else {
 				s += normalStyle.Render("  " + name)
@@ -90,8 +140,6 @@ func (m model) addMusicView() string {
 	}
 
 	s += "\n"
-	s += helpStyle.Render("Enter Add • b Back")
-
 	return s
 }
 
@@ -103,8 +151,6 @@ func (m model) listMusicView() string {
 
 	if len(queue) == 0 {
 		s += helpStyle.Render("(queue is empty)")
-		s += "\n\n"
-		s += helpStyle.Render("Press b to menu")
 		return s
 	}
 
@@ -114,7 +160,5 @@ func (m model) listMusicView() string {
 	}
 
 	s += "\n"
-	s += helpStyle.Render("Press b to menu")
-
 	return s
 }

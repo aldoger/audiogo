@@ -19,7 +19,7 @@ func main() {
 
 	musicFiles, err := utils.ListMusic(musicDir)
 	if musicFiles == nil && err != nil {
-		log.Fatalf("Error: $s", err.Error())
+		log.Fatalf("Error: %s", err.Error())
 		os.Exit(1)
 	}
 
