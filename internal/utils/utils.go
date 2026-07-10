@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,7 +49,7 @@ func ListMusic(path string) ([]string, error) {
 	}
 
 	if len(musicFiles) < 1 {
-		return nil, errors.New("empty directory, no audio files found")
+		return nil, nil
 	}
 
 	return musicFiles, nil

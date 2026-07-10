@@ -67,14 +67,19 @@ func (m model) addMusicView() string {
 	s := titleStyle.Render("Add Music")
 	s += "\n\n"
 
-	for i, file := range *m.choices {
-		name := file
+	if len(*m.choices) != 0 {
+		for i, file := range *m.choices {
+			name := file
 
-		if i == m.cursor {
-			s += selectedStyle.Render("> " + name)
-		} else {
-			s += normalStyle.Render("  " + name)
+			if i == m.cursor {
+				s += selectedStyle.Render("> " + name)
+			} else {
+				s += normalStyle.Render("  " + name)
+			}
+			s += "\n"
 		}
+	} else {
+		s += infoStyle.Render("No music files found!")
 		s += "\n"
 	}
 
