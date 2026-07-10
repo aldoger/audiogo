@@ -24,10 +24,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 
-	case autoBackMsg:
-		m.mode = viewMenu
-		return m, nil
-
 	case SongFinishedMsg:
 		next := m.musicQueue.Dequeue()
 		if next == "" {
@@ -73,7 +69,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				case LIST:
 					m.mode = viewMusicList
-					return m, autoBackCmd()
+					return m, nil
 
 				case PLAY:
 					music := m.musicQueue.Dequeue()
@@ -109,6 +105,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					}
 					return m, waitForSong(m.player)
 				}
+			}
+
+		case viewMusicList:
+			switch msg.String() {
+			case "b":
+				m.mode = viewMenu
+				m.cursor = 0
+				m.message = nil
 			}
 
 		case viewAddMusic:

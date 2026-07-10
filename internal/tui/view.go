@@ -98,6 +98,8 @@ func (m model) listMusicView() string {
 
 	if len(queue) == 0 {
 		s += helpStyle.Render("(queue is empty)")
+		s += "\n\n"
+		s += helpStyle.Render("Press b to menu")
 		return s
 	}
 
@@ -107,7 +109,7 @@ func (m model) listMusicView() string {
 	}
 
 	s += "\n"
-	s += helpStyle.Render("Returning to menu...")
+	s += helpStyle.Render("Press b to menu")
 
 	return s
 }
