@@ -9,25 +9,27 @@ type model struct {
 	width  int
 	height int
 
-	mode       viewMode
-	options    []string
-	choices    *[]service.MusicFile
-	menuCursor int
-	mainCursor int
-	message    ModelMessage
-	player     *service.AudioPlayer
-	selected   map[int]struct{}
-	musicQueue service.MusicQueue
+	mode        viewMode
+	options     []string
+	playOptions []string
+	choices     *[]service.MusicFile
+	menuCursor  int
+	mainCursor  int
+	message     ModelMessage
+	player      *service.AudioPlayer
+	selected    map[int]struct{}
+	musicQueue  service.MusicQueue
 }
 
 func InitialModel(musicFiles *[]service.MusicFile) model {
 	return model{
-		mode:       viewMenu,
-		options:    []string{"add", "play", "list", "pause", "resume", "next"},
-		choices:    musicFiles,
-		player:     service.NewAudioPlayer(),
-		selected:   make(map[int]struct{}),
-		musicQueue: service.NewMusicQueue(),
+		mode:        viewMenu,
+		options:     []string{"add", "play", "list", "search"},
+		playOptions: []string{"pause", "resume", "next"},
+		choices:     musicFiles,
+		player:      service.NewAudioPlayer(),
+		selected:    make(map[int]struct{}),
+		musicQueue:  service.NewMusicQueue(),
 	}
 }
 

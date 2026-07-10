@@ -77,28 +77,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						return m, nil
 					}
 					m.message = InfoMessage{Text: "Playing..."}
+					m.mode = viewPlayMusic
 					if err := m.player.Play(music); err != nil {
-						m.message = WarningMessage{Text: err.Error()}
-						return m, nil
-					}
-					return m, waitForSong(m.player)
-
-				case PAUSE:
-					m.message = InfoMessage{Text: "Music pause!"}
-					m.player.Pause()
-
-				case RESUME:
-					m.message = InfoMessage{Text: "Resume..."}
-					m.player.Resume()
-
-				case NEXT:
-					next := m.musicQueue.Dequeue()
-					if next == "" {
-						m.message = WarningMessage{Text: "No more music in queue"}
-						return m, nil
-					}
-					m.message = InfoMessage{Text: "Playing Next Music..."}
-					if err := m.player.Play(next); err != nil {
 						m.message = WarningMessage{Text: err.Error()}
 						return m, nil
 					}
@@ -139,6 +119,36 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			case "q", "ctrl+c":
 				return m, tea.Quit
+			}
+
+		case viewPlayMusic:
+			switch msg.String() {
+
+			case "b":
+				m.mode = viewMenu
+				m.menuCursor = 0
+				m.message = nil
+
+			case "p":
+				m.message = InfoMessage{Text: "Music pause!"}
+				m.player.Pause()
+
+			case "m":
+				m.message = InfoMessage{Text: "Resume..."}
+				m.player.Resume()
+
+			case "n":
+				next := m.musicQueue.Dequeue()
+				if next == "" {
+					m.message = WarningMessage{Text: "No more music in queue"}
+					return m, nil
+				}
+				m.message = InfoMessage{Text: "Playing Next Music..."}
+				if err := m.player.Play(next); err != nil {
+					m.message = WarningMessage{Text: err.Error()}
+					return m, nil
+				}
+				return m, waitForSong(m.player)
 			}
 		}
 	}

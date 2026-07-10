@@ -19,6 +19,7 @@ const (
 	viewMenu viewMode = iota
 	viewAddMusic
 	viewMusicList
+	viewPlayMusic
 )
 
 func (m model) View() string {
@@ -96,6 +97,15 @@ func (m model) currentView(width, height int) string {
 	case viewMusicList:
 		return m.listMusicView()
 
+	case viewPlayMusic:
+		return lipgloss.Place(
+			width-2,
+			height-2,
+			lipgloss.Center,
+			lipgloss.Center,
+			m.playMusicView(),
+		)
+
 	default:
 		return ""
 	}
@@ -137,6 +147,45 @@ func (m model) helpView(width, height int) string {
 		lipgloss.Center,
 		s,
 	)
+}
+
+func (m model) playMusicView() string {
+	s := titleStyle.Render("Now Playing")
+	s += "\n\n"
+
+	s += normalStyle.Render("♪ Interstellar - No Time")
+	s += "\n"
+	s += infoStyle.Render("Hans Zimmer")
+	s += "\n\n"
+
+	progress := 0.42 // 42%
+
+	barWidth := m.width - 18
+	if barWidth < 10 {
+		barWidth = 10
+	}
+
+	filled := int(progress * float64(barWidth))
+
+	bar := strings.Repeat("━", filled)
+	bar += "╺"
+	bar += strings.Repeat("━", max(0, barWidth-filled-1))
+
+	s += fmt.Sprintf("1:23 %s 4:36", bar)
+	s += "\n\n"
+
+	if m.player.IsPaused() {
+		s += helpStyle.Render("▶ Resume")
+	} else {
+		s += helpStyle.Render("⏸ Pause")
+	}
+
+	s += "    "
+	s += helpStyle.Render("⏮ Prev")
+	s += "    "
+	s += helpStyle.Render("⏭ Next")
+
+	return s
 }
 
 func (m model) addMusicView() string {

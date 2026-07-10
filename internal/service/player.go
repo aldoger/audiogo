@@ -18,12 +18,15 @@ type AudioPlayer struct {
 	ctrl        *beep.Ctrl
 	mixer       *beep.Mixer
 	done        chan struct{}
+	isPaused    bool
 	initialized bool
 }
 
 func NewAudioPlayer() *AudioPlayer {
 	return &AudioPlayer{
-		mixer: &beep.Mixer{},
+		mixer:       &beep.Mixer{},
+		isPaused:    false,
+		initialized: false,
 	}
 }
 
@@ -82,6 +85,7 @@ func (ap *AudioPlayer) Pause() {
 
 	speaker.Lock()
 	ap.ctrl.Paused = true
+	ap.isPaused = true
 	speaker.Unlock()
 }
 
@@ -92,7 +96,16 @@ func (ap *AudioPlayer) Resume() {
 
 	speaker.Lock()
 	ap.ctrl.Paused = false
+	ap.isPaused = false
 	speaker.Unlock()
+}
+
+func (ap *AudioPlayer) IsPaused() bool {
+	return ap.isPaused
+}
+
+func (ap *AudioPlayer) IsInitialized() bool {
+	return ap.IsInitialized()
 }
 
 func (ap *AudioPlayer) Stop() {
