@@ -30,13 +30,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.message = WarningMessage{Text: "No more music in queue"}
 			return m, nil
 		}
-		m.message = InfoMessage{Text: "Playing Next Music..."}
 		duration, err := m.player.Play(next)
 		if err != nil {
 			m.message = WarningMessage{Text: err.Error()}
 			return m, nil
 		}
-		m.duration = duration
+		m.currentMusic = Music{Duration: duration, Title: next}
 		return m, waitForSong(m.player)
 
 	case tea.KeyMsg:
@@ -78,14 +77,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.message = WarningMessage{Text: "No music in queue yet!!"}
 						return m, nil
 					}
-					m.message = InfoMessage{Text: "Playing..."}
 					m.mode = viewPlayMusic
 					duration, err := m.player.Play(music)
 					if err != nil {
 						m.message = WarningMessage{Text: err.Error()}
 						return m, nil
 					}
-					m.duration = duration
+					m.currentMusic = Music{Duration: duration, Title: music}
 					return m, waitForSong(m.player)
 				}
 			}
@@ -147,13 +145,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.message = WarningMessage{Text: "No more music in queue"}
 					return m, nil
 				}
-				m.message = InfoMessage{Text: "Playing Next Music..."}
 				duration, err := m.player.Play(next)
 				if err != nil {
 					m.message = WarningMessage{Text: err.Error()}
 					return m, nil
 				}
-				m.duration = duration
+				m.currentMusic = Music{Duration: duration, Title: next}
 				return m, waitForSong(m.player)
 			}
 		}

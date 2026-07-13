@@ -159,9 +159,9 @@ func (m model) playMusicView() string {
 	s := titleStyle.Render("Now Playing")
 	s += "\n\n"
 
-	s += normalStyle.Render("♪ Interstellar - No Time")
-	s += "\n"
-	s += infoStyle.Render("Hans Zimmer")
+	music := m.currentMusic
+
+	s += normalStyle.Render("♪ " + music.Title)
 	s += "\n\n"
 
 	progress := 0.42 // 42%
@@ -177,7 +177,7 @@ func (m model) playMusicView() string {
 	bar += "╺"
 	bar += strings.Repeat("━", max(0, barWidth-filled-1))
 
-	s += "1:23 / 4:36"
+	s += "1:23 / " + music.Duration.String()
 	progressLine := fmt.Sprintf("%s", bar)
 	s += lipgloss.PlaceHorizontal(m.width, lipgloss.Center, progressLine)
 	s += "\n\n"

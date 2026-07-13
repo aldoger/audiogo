@@ -7,21 +7,25 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type Music struct {
+	Title    string
+	Duration time.Duration
+}
+
 type model struct {
 	width  int
 	height int
 
-	mode        viewMode
-	options     []string
-	playOptions []string
-	duration    time.Duration
-	choices     *[]service.MusicFile
-	menuCursor  int
-	mainCursor  int
-	message     ModelMessage
-	player      *service.AudioPlayer
-	selected    map[int]struct{}
-	musicQueue  service.MusicQueue
+	mode         viewMode
+	options      []string
+	playOptions  []string
+	currentMusic Music
+	choices      *[]service.MusicFile
+	menuCursor   int
+	mainCursor   int
+	message      ModelMessage
+	player       *service.AudioPlayer
+	musicQueue   service.MusicQueue
 }
 
 func InitialModel(musicFiles *[]service.MusicFile) model {
@@ -31,7 +35,6 @@ func InitialModel(musicFiles *[]service.MusicFile) model {
 		playOptions: []string{"pause", "resume", "next"},
 		choices:     musicFiles,
 		player:      service.NewAudioPlayer(),
-		selected:    make(map[int]struct{}),
 		musicQueue:  service.NewMusicQueue(),
 	}
 }
