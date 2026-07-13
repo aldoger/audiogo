@@ -31,10 +31,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		m.message = InfoMessage{Text: "Playing Next Music..."}
-		if err := m.player.Play(next); err != nil {
+		duration, err := m.player.Play(next)
+		if err != nil {
 			m.message = WarningMessage{Text: err.Error()}
 			return m, nil
 		}
+		m.duration = duration
 		return m, waitForSong(m.player)
 
 	case tea.KeyMsg:
@@ -78,10 +80,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					}
 					m.message = InfoMessage{Text: "Playing..."}
 					m.mode = viewPlayMusic
-					if err := m.player.Play(music); err != nil {
+					duration, err := m.player.Play(music)
+					if err != nil {
 						m.message = WarningMessage{Text: err.Error()}
 						return m, nil
 					}
+					m.duration = duration
 					return m, waitForSong(m.player)
 				}
 			}
@@ -144,10 +148,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, nil
 				}
 				m.message = InfoMessage{Text: "Playing Next Music..."}
-				if err := m.player.Play(next); err != nil {
+				duration, err := m.player.Play(next)
+				if err != nil {
 					m.message = WarningMessage{Text: err.Error()}
 					return m, nil
 				}
+				m.duration = duration
 				return m, waitForSong(m.player)
 			}
 		}

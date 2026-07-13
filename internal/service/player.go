@@ -30,17 +30,20 @@ func NewAudioPlayer() *AudioPlayer {
 	}
 }
 
-func (ap *AudioPlayer) Play(file string) error {
+func (ap *AudioPlayer) Play(file string) (time.Duration, error) {
 	f, err := os.Open(file)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	streamer, format, err := mp3.Decode(f)
 	if err != nil {
 		f.Close()
-		return err
+		return 0, err
 	}
+
+	samples := streamer.Len()
+	duration := format.SampleRate.D(samples)
 
 	if !ap.initialized {
 		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
@@ -71,7 +74,7 @@ func (ap *AudioPlayer) Play(file string) error {
 
 	speaker.Unlock()
 
-	return nil
+	return duration, nil
 }
 
 func (ap *AudioPlayer) Done() <-chan struct{} {

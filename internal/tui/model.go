@@ -1,6 +1,8 @@
 package tui
 
 import (
+	"time"
+
 	"github.com/aldoger/audiogo/internal/service"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -12,6 +14,7 @@ type model struct {
 	mode        viewMode
 	options     []string
 	playOptions []string
+	duration    time.Duration
 	choices     *[]service.MusicFile
 	menuCursor  int
 	mainCursor  int
