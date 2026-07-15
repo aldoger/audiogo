@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/aldoger/audiogo/internal/utils"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/common-nighthawk/go-figure"
 )
@@ -177,7 +178,9 @@ func (m model) playMusicView() string {
 	bar += "╺"
 	bar += strings.Repeat("━", max(0, barWidth-filled-1))
 
-	s += "1:23 / " + music.Duration.String()
+	duration := utils.FormatDuration(music.Duration)
+
+	s += "1:23 / " + duration
 	progressLine := fmt.Sprintf("%s", bar)
 	s += lipgloss.PlaceHorizontal(m.width, lipgloss.Center, progressLine)
 	s += "\n\n"

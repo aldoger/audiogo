@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/aldoger/audiogo/internal/service"
 )
@@ -56,4 +58,11 @@ func ListMusic(path string) ([]service.MusicFile, error) {
 	}
 
 	return musicFiles, nil
+}
+
+func FormatDuration(d time.Duration) string {
+	minutes := d / time.Minute
+	seconds := (d % time.Minute) / time.Second
+
+	return fmt.Sprintf("%02d:%02d", minutes, seconds)
 }
