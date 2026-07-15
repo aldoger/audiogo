@@ -179,8 +179,9 @@ func (m model) playMusicView() string {
 	bar += strings.Repeat("━", max(0, barWidth-filled-1))
 
 	duration := utils.FormatDuration(music.Duration)
+	current := utils.FormatDuration(m.currentTime)
 
-	s += "1:23 / " + duration
+	s += current + " / " + duration
 	progressLine := fmt.Sprintf("%s", bar)
 	s += lipgloss.PlaceHorizontal(m.width, lipgloss.Center, progressLine)
 	s += "\n\n"

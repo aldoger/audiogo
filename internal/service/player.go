@@ -15,8 +15,11 @@ type MusicFile struct {
 }
 
 type AudioPlayer struct {
-	ctrl        *beep.Ctrl
-	mixer       *beep.Mixer
+	ctrl       *beep.Ctrl
+	mixer      *beep.Mixer
+	streamer   beep.StreamSeekCloser
+	sampleRate beep.SampleRate
+
 	done        chan struct{}
 	isPaused    bool
 	initialized bool
@@ -41,6 +44,9 @@ func (ap *AudioPlayer) Play(file string) (time.Duration, error) {
 		f.Close()
 		return 0, err
 	}
+
+	ap.streamer = streamer
+	ap.sampleRate = beep.SampleRate(format.SampleRate)
 
 	samples := streamer.Len()
 	duration := format.SampleRate.D(samples)
@@ -77,6 +83,19 @@ func (ap *AudioPlayer) Play(file string) (time.Duration, error) {
 	return duration, nil
 }
 
+func (ap *AudioPlayer) CurrentTime() time.Duration {
+	if ap.streamer == nil {
+		return 0
+	}
+
+	speaker.Lock()
+	pos := ap.streamer.Position()
+	sr := ap.sampleRate
+	speaker.Unlock()
+
+	return sr.D(pos)
+}
+
 func (ap *AudioPlayer) Done() <-chan struct{} {
 	return ap.done
 }
@@ -108,7 +127,7 @@ func (ap *AudioPlayer) IsPaused() bool {
 }
 
 func (ap *AudioPlayer) IsInitialized() bool {
-	return ap.IsInitialized()
+	return ap.initialized
 }
 
 func (ap *AudioPlayer) Stop() {

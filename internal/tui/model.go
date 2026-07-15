@@ -20,6 +20,7 @@ type model struct {
 	options      []string
 	playOptions  []string
 	currentMusic Music
+	currentTime  time.Duration
 	choices      *[]service.MusicFile
 	menuCursor   int
 	mainCursor   int

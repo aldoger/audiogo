@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/aldoger/audiogo/internal/utils"
 	tea "github.com/charmbracelet/bubbletea"
@@ -37,6 +38,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		m.currentMusic = Music{Duration: duration, Title: next}
 		return m, waitForSong(m.player)
+
+	case TickMsg:
+		m.currentTime = m.player.CurrentTime()
+		return m, tickCmd()
 
 	case tea.KeyMsg:
 		switch m.mode {
@@ -124,6 +129,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case viewPlayMusic:
+			ticker := time.NewTicker(100 * time.Millisecond)
+			defer ticker.Stop()
+
 			switch msg.String() {
 
 			case "b":
