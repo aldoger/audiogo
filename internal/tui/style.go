@@ -73,8 +73,8 @@ var (
 
 func Box(content string, width, height int) string {
 	style := boxStyle.
-		Width(width).
-		Height(height)
+		Width(max(1, width-4)).
+		Height(max(1, height-2))
 
 	return style.Render(content)
 }

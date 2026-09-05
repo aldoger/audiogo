@@ -10,7 +10,11 @@ import (
 )
 
 func titleHeader() string {
-	title := strings.TrimRight(figure.NewFigure("AUDIOGO", "larry3d", true).String(), "\n")
+	title := strings.TrimRight(
+		figure.NewFigure("AUDIOGO", "larry3d", true).String(),
+		"\n",
+	)
+
 	return splashStyle.Render(title)
 }
 
@@ -23,227 +27,606 @@ const (
 	viewPlayMusic
 )
 
+// --------------------------------------------------
+// Main View
+// --------------------------------------------------
+
 func (m model) View() string {
-	bodyHeight := max(10, m.height-6)
-
-	containerWidth := int(float64(m.width) * 0.6)
-
-	if containerWidth < 80 {
-		containerWidth = m.width
+	if m.width <= 0 || m.height <= 0 {
+		return ""
 	}
 
-	menuWidth := 30
-	rightWidth := containerWidth - menuWidth
+	appHeight := max(12, m.height/2)
 
-	mainHeight := bodyHeight - 8
-	helpHeight := 8
+	appWidth := m.width - 2
 
-	menu := Box(
+	headerHeight := 1
+	footerHeight := 1
+
+	bodyHeight := appHeight - headerHeight - footerHeight
+
+	sidebarWidth := 24
+	contentWidth := appWidth - sidebarWidth
+
+	header := m.headerView()
+
+	sidebar := Box(
 		m.menuView(),
-		menuWidth,
+		sidebarWidth,
 		bodyHeight,
 	)
 
-	main := Box(
-		m.currentView(rightWidth, mainHeight),
-		rightWidth,
-		mainHeight,
+	content := Box(
+		m.currentView(
+			contentWidth,
+			bodyHeight,
+		),
+		contentWidth,
+		bodyHeight,
 	)
 
-	help := Box(
-		m.helpView(rightWidth, helpHeight),
-		rightWidth,
-		helpHeight,
-	)
-
-	right := lipgloss.JoinVertical(
-		lipgloss.Left,
-		main,
-		help,
-	)
-
-	content := lipgloss.JoinHorizontal(
+	body := lipgloss.JoinHorizontal(
 		lipgloss.Top,
-		menu,
-		right,
+		sidebar,
+		content,
 	)
 
-	return lipgloss.PlaceHorizontal(
+	footer := m.footerView()
+
+	app := lipgloss.JoinVertical(
+		lipgloss.Left,
+		header,
+		body,
+		footer,
+	)
+
+	// Center the 50%-height application vertically.
+	return lipgloss.Place(
 		m.width,
+		m.height,
 		lipgloss.Center,
-		content,
+		lipgloss.Center,
+		app,
 	)
 }
 
+// --------------------------------------------------
+// Layout Helpers
+// --------------------------------------------------
+
+func (m model) sidebarWidth() int {
+	return 24
+}
+
+func (m model) contentWidth() int {
+	return m.width - m.sidebarWidth()
+}
+
+func (m model) contentHeight() int {
+	return max(8, m.height/2-2)
+}
+
+// --------------------------------------------------
+// Header
+// --------------------------------------------------
+
+func (m model) headerView() string {
+	status := "● STOPPED"
+
+	if m.player != nil {
+		if m.player.IsPaused() {
+			status = "● PAUSED"
+		} else {
+			status = "● PLAYING"
+		}
+	}
+
+	left := titleStyle.Render("AUDIOGO")
+	right := helpStyle.Render(status)
+
+	availableWidth := max(
+		1,
+		m.width-lipgloss.Width(left),
+	)
+
+	rightAligned := lipgloss.PlaceHorizontal(
+		availableWidth,
+		lipgloss.Right,
+		right,
+	)
+
+	return lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		left,
+		rightAligned,
+	)
+}
+
+// --------------------------------------------------
+// Sidebar
+// --------------------------------------------------
+
+func (m model) menuView() string {
+	var b strings.Builder
+
+	b.WriteString(titleStyle.Render("Library"))
+	b.WriteString("\n\n")
+
+	for i, option := range m.options {
+		if i == m.menuCursor {
+			b.WriteString(
+				selectedStyle.Render("> " + option),
+			)
+		} else {
+			b.WriteString(
+				normalStyle.Render("  " + option),
+			)
+		}
+
+		b.WriteString("\n")
+	}
+
+	return b.String()
+}
+
+// --------------------------------------------------
+// Footer
+// --------------------------------------------------
+
+func (m model) footerView() string {
+	help := lipgloss.JoinHorizontal(
+		lipgloss.Center,
+
+		helpStyle.Render("↑/↓ Navigate"),
+		"   ",
+		helpStyle.Render("Enter Select"),
+		"   ",
+		helpStyle.Render("Space Play/Pause"),
+		"   ",
+		helpStyle.Render("b Back"),
+		"   ",
+		helpStyle.Render("q Quit"),
+	)
+
+	return help
+}
+
+// --------------------------------------------------
+// Current View
+// --------------------------------------------------
+
 func (m model) currentView(width, height int) string {
 	switch m.mode {
+
 	case viewMenu:
-		return lipgloss.Place(
-			width-2,
-			height-2,
-			lipgloss.Center,
-			lipgloss.Center,
-			titleHeader(),
-		)
+		return m.homeView(width, height)
 
 	case viewAddMusic:
-		return lipgloss.Place(
-			width-2,
-			height-2,
-			lipgloss.Center,
-			lipgloss.Center,
-			m.addMusicView(),
-		)
+		return m.addMusicView(width, height)
 
 	case viewMusicList:
-		return lipgloss.Place(
-			width-2,
-			height-2,
-			lipgloss.Center,
-			lipgloss.Center,
-			m.listMusicView(),
-		)
+		return m.listMusicView(width, height)
 
 	case viewPlayMusic:
-		return lipgloss.Place(
-			width-2,
-			height-2,
-			lipgloss.Center,
-			lipgloss.Center,
-			m.playMusicView(),
-		)
+		return m.playMusicView(width, height)
 
 	default:
 		return ""
 	}
 }
 
-func (m model) menuView() string {
-	s := titleStyle.Render("Choose Operation")
-	s += "\n\n"
+// --------------------------------------------------
+// Home
+// --------------------------------------------------
 
-	for i, option := range m.options {
-		if i == m.menuCursor {
-			s += selectedStyle.Render("> " + option)
-		} else {
-			s += normalStyle.Render("  " + option)
-		}
-		s += "\n"
+func (m model) homeView(width, height int) string {
+	var b strings.Builder
+
+	title := titleStyle.Render("Welcome to AUDIOGO")
+
+	b.WriteString(title)
+	b.WriteString("\n\n")
+
+	description := helpStyle.Render(
+		"Your music player, running entirely in the terminal.",
+	)
+
+	b.WriteString(description)
+	b.WriteString("\n\n\n")
+
+	// ----------------------------------------------
+	// Statistics
+	// ----------------------------------------------
+
+	musicCount := 0
+
+	if m.choices != nil {
+		musicCount = len(*m.choices)
 	}
 
-	s += "\n"
-	return s
-}
+	queue := m.musicQueue.ListMusicInQueue()
+	queueCount := len(queue)
 
-func (m model) helpView(width, height int) string {
-	s := lipgloss.JoinHorizontal(
-		lipgloss.Center,
-		helpStyle.Render("↑/↓ Move"),
-		" | ",
-		helpStyle.Render("Enter Select"),
-		" | ",
-		helpStyle.Render("b Back"),
-		" | ",
-		helpStyle.Render("q Quit"),
+	statsWidth := max(20, (width-8)/2)
+
+	musicBox := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		Padding(1, 2).
+		Width(statsWidth).
+		Render(
+			titleStyle.Render("MUSIC") +
+				"\n\n" +
+				fmt.Sprintf("%d tracks", musicCount),
+		)
+
+	queueBox := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		Padding(1, 2).
+		Width(statsWidth).
+		Render(
+			titleStyle.Render("QUEUE") +
+				"\n\n" +
+				fmt.Sprintf("%d tracks", queueCount),
+		)
+
+	stats := lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		musicBox,
+		"  ",
+		queueBox,
 	)
+
+	b.WriteString(stats)
+	b.WriteString("\n\n")
+
+	// ----------------------------------------------
+	// Current Music
+	// ----------------------------------------------
+
+	b.WriteString(titleStyle.Render("Current Track"))
+	b.WriteString("\n\n")
+
+	if m.currentMusic.Title != "" {
+		b.WriteString(
+			selectedStyle.Render(
+				"♪ " + m.currentMusic.Title,
+			),
+		)
+	} else {
+		b.WriteString(
+			helpStyle.Render("No music currently playing."),
+		)
+	}
 
 	return lipgloss.Place(
 		width-2,
 		height-2,
-		lipgloss.Center,
-		lipgloss.Center,
-		s,
+		lipgloss.Left,
+		lipgloss.Top,
+		b.String(),
 	)
 }
 
-func (m model) playMusicView() string {
-	s := titleStyle.Render("Now Playing")
-	s += "\n\n"
+// --------------------------------------------------
+// Add Music
+// --------------------------------------------------
 
-	music := m.currentMusic
+func (m model) addMusicView(width, height int) string {
+	var b strings.Builder
 
-	s += normalStyle.Render("♪ " + music.Title)
-	s += "\n\n"
+	b.WriteString(titleStyle.Render("Add Music"))
+	b.WriteString("\n\n")
 
-	progress := 0.42 // 42%
+	b.WriteString(
+		helpStyle.Render(
+			"Select music files to add to your library.",
+		),
+	)
 
-	barWidth := int(float64(m.width) * 0.4)
-	if barWidth < 10 {
-		barWidth = 10
-	}
+	b.WriteString("\n\n")
 
-	filled := int(progress * float64(barWidth))
+	if m.choices == nil || len(*m.choices) == 0 {
+		b.WriteString(
+			infoStyle.Render("No music files found!"),
+		)
 
-	bar := strings.Repeat("━", filled)
-	bar += "╺"
-	bar += strings.Repeat("━", max(0, barWidth-filled-1))
-
-	duration := utils.FormatDuration(music.Duration)
-	current := utils.FormatDuration(m.currentTime)
-
-	s += current + " / " + duration
-	progressLine := fmt.Sprintf("%s", bar)
-	s += lipgloss.PlaceHorizontal(m.width, lipgloss.Center, progressLine)
-	s += "\n\n"
-
-	if m.player.IsPaused() {
-		s += helpStyle.Render("▶ Resume")
-	} else {
-		s += helpStyle.Render("⏸ Pause")
-	}
-
-	s += "    "
-	s += helpStyle.Render("⏭ Next")
-
-	return s
-}
-
-func (m model) addMusicView() string {
-	s := titleStyle.Render("Add Music")
-	s += "\n\n"
-
-	if len(*m.choices) != 0 {
-		for i, file := range *m.choices {
-			name := file.Title
-
-			if i == m.mainCursor {
-				s += selectedStyle.Render("> " + name)
-			} else {
-				s += normalStyle.Render("  " + name)
-			}
-			s += "\n"
+		if m.message != nil {
+			b.WriteString("\n\n")
+			b.WriteString(m.message.Render())
 		}
-	} else {
-		s += infoStyle.Render("No music files found!")
-		s += "\n"
+
+		return lipgloss.Place(
+			width-2,
+			height-2,
+			lipgloss.Left,
+			lipgloss.Top,
+			b.String(),
+		)
 	}
+
+	// ----------------------------------------------
+	// File list
+	// ----------------------------------------------
+
+	listWidth := max(10, width-6)
+	listHeight := max(5, height-10)
+
+	var list strings.Builder
+
+	for i, file := range *m.choices {
+
+		name := file.Title
+
+		// Prevent very long filenames from destroying
+		// the layout.
+		maxNameWidth := max(5, listWidth-6)
+
+		if lipgloss.Width(name) > maxNameWidth {
+			name = truncateString(name, maxNameWidth)
+		}
+
+		if i == m.mainCursor {
+			list.WriteString(
+				selectedStyle.Render("> " + name),
+			)
+		} else {
+			list.WriteString(
+				normalStyle.Render("  " + name),
+			)
+		}
+
+		if i != len(*m.choices)-1 {
+			list.WriteString("\n")
+		}
+	}
+
+	fileList := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		Padding(1, 2).
+		Width(listWidth).
+		Height(listHeight).
+		Render(list.String())
+
+	b.WriteString(fileList)
+	b.WriteString("\n\n")
+
+	// ----------------------------------------------
+	// Message
+	// ----------------------------------------------
 
 	if m.message != nil {
-		s += "\n"
-		s += m.message.Render()
-		s += "\n"
+		b.WriteString(m.message.Render())
 	}
 
-	s += "\n"
-	return s
+	return lipgloss.Place(
+		width-2,
+		height-2,
+		lipgloss.Left,
+		lipgloss.Top,
+		b.String(),
+	)
 }
 
-func (m model) listMusicView() string {
-	s := titleStyle.Render("Music Queue")
-	s += "\n\n"
+// --------------------------------------------------
+// Music Queue
+// --------------------------------------------------
+
+func (m model) listMusicView(width, height int) string {
+	var b strings.Builder
+
+	b.WriteString(titleStyle.Render("Music Queue"))
+	b.WriteString("\n\n")
 
 	queue := m.musicQueue.ListMusicInQueue()
 
 	if len(queue) == 0 {
-		s += helpStyle.Render("(queue is empty)")
+		b.WriteString(
+			helpStyle.Render("(queue is empty)"),
+		)
+
+		return lipgloss.Place(
+			width-2,
+			height-2,
+			lipgloss.Left,
+			lipgloss.Top,
+			b.String(),
+		)
+	}
+
+	b.WriteString(
+		helpStyle.Render(
+			fmt.Sprintf("%d tracks in queue", len(queue)),
+		),
+	)
+
+	b.WriteString("\n\n")
+
+	// ----------------------------------------------
+	// Queue list
+	// ----------------------------------------------
+
+	var list strings.Builder
+
+	for i, song := range queue {
+
+		prefix := fmt.Sprintf("%02d  ", i+1)
+
+		// Highlight current track.
+		if i == 0 {
+			list.WriteString(
+				selectedStyle.Render(
+					prefix + "♪ " + song,
+				),
+			)
+		} else {
+			list.WriteString(
+				normalStyle.Render(
+					prefix + song,
+				),
+			)
+		}
+
+		if i != len(queue)-1 {
+			list.WriteString("\n")
+		}
+	}
+
+	queueBox := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		Padding(1, 2).
+		Width(max(10, width-6)).
+		Height(max(5, height-8)).
+		Render(list.String())
+
+	b.WriteString(queueBox)
+
+	return lipgloss.Place(
+		width-2,
+		height-2,
+		lipgloss.Left,
+		lipgloss.Top,
+		b.String(),
+	)
+}
+
+// --------------------------------------------------
+// Now Playing
+// --------------------------------------------------
+
+func (m model) playMusicView(width, height int) string {
+	var b strings.Builder
+
+	b.WriteString(titleStyle.Render("NOW PLAYING"))
+	b.WriteString("\n\n")
+
+	music := m.currentMusic
+
+	title := music.Title
+	if title == "" {
+		title = "No music selected"
+	}
+
+	b.WriteString(
+		selectedStyle.Render("♪ " + title),
+	)
+
+	b.WriteString("\n\n")
+
+	progress := 0.42
+
+	barWidth := max(20, width-20)
+	filled := int(progress * float64(barWidth))
+
+	bar := strings.Repeat("━", filled)
+
+	if filled < barWidth {
+		bar += "╺"
+	}
+
+	bar += strings.Repeat(
+		"━",
+		max(0, barWidth-filled-1),
+	)
+
+	current := utils.FormatDuration(m.currentTime)
+	duration := utils.FormatDuration(music.Duration)
+
+	b.WriteString(
+		helpStyle.Render(
+			fmt.Sprintf("%s / %s", current, duration),
+		),
+	)
+
+	b.WriteString("\n")
+
+	b.WriteString(
+		lipgloss.PlaceHorizontal(
+			width-4,
+			lipgloss.Center,
+			bar,
+		),
+	)
+
+	b.WriteString("\n\n")
+
+	playback := "⏸ Pause"
+
+	if m.player != nil && m.player.IsPaused() {
+		playback = "▶ Resume"
+	}
+
+	controls := lipgloss.JoinHorizontal(
+		lipgloss.Center,
+		helpStyle.Render("⏮ Previous"),
+		"   ",
+		selectedStyle.Render(playback),
+		"   ",
+		helpStyle.Render("⏭ Next"),
+	)
+
+	b.WriteString(
+		lipgloss.PlaceHorizontal(
+			width-4,
+			lipgloss.Center,
+			controls,
+		),
+	)
+
+	return b.String()
+}
+
+// --------------------------------------------------
+// Small Terminal View
+// --------------------------------------------------
+
+func (m model) smallView() string {
+	var b strings.Builder
+
+	b.WriteString(
+		titleStyle.Render("AUDIOGO"),
+	)
+
+	b.WriteString("\n\n")
+
+	switch m.mode {
+
+	case viewMenu:
+		b.WriteString(m.menuView())
+
+	case viewAddMusic:
+		b.WriteString(m.addMusicView(m.width, m.height))
+
+	case viewMusicList:
+		b.WriteString(m.listMusicView(m.width, m.height))
+
+	case viewPlayMusic:
+		b.WriteString(m.playMusicView(m.width, m.height))
+	}
+
+	b.WriteString("\n\n")
+	b.WriteString(
+		helpStyle.Render("q Quit"),
+	)
+
+	return b.String()
+}
+
+// --------------------------------------------------
+// Utilities
+// --------------------------------------------------
+
+func truncateString(s string, maxWidth int) string {
+	if maxWidth <= 0 {
+		return ""
+	}
+
+	if lipgloss.Width(s) <= maxWidth {
 		return s
 	}
 
-	for i, song := range queue {
-		s += normalStyle.Render(fmt.Sprintf("%2d. %s", i+1, song))
-		s += "\n"
+	if maxWidth <= 3 {
+		return s[:maxWidth]
 	}
 
-	s += "\n"
-	return s
+	return s[:maxWidth-3] + "..."
 }
