@@ -111,18 +111,8 @@ func (m model) contentHeight() int {
 // --------------------------------------------------
 
 func (m model) headerView() string {
-	status := "● STOPPED"
-
-	if m.player != nil {
-		if m.player.IsPaused() {
-			status = "● PAUSED"
-		} else {
-			status = "● PLAYING"
-		}
-	}
-
 	left := titleStyle.Render("AUDIOGO")
-	right := helpStyle.Render(status)
+	right := helpStyle.Render()
 
 	availableWidth := max(
 		1,

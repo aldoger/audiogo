@@ -47,12 +47,12 @@ var (
 
 	boxStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#6366F1")).
+			BorderForeground(lipgloss.Color("#2f9929")).
 			Padding(0, 1)
 
 	titleStyle = lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("#7D56F4"))
+			Foreground(lipgloss.Color("#2f9929"))
 
 	selectedStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#04B575")).
@@ -68,7 +68,7 @@ var (
 			Bold(true).Foreground(lipgloss.Color("#b50a04"))
 
 	helpStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#9194a3"))
+			Foreground(lipgloss.Color("#f7f7f7"))
 )
 
 func Box(content string, width, height int) string {
