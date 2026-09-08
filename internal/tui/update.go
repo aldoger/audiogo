@@ -69,8 +69,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					dirPath, _ := utils.DirExist()
 					checkMusic, _ := utils.ListMusic(dirPath)
 					m.choices = &checkMusic
+					m.message = nil
 
 					m.mode = viewAddMusic
+					return m, nil
 
 				case LIST:
 					m.mode = viewMusicList
