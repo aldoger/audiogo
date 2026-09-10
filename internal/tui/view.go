@@ -111,7 +111,7 @@ func (m model) contentHeight() int {
 // --------------------------------------------------
 
 func (m model) headerView() string {
-	left := titleStyle.Render("AUDIOGO")
+	left := titleStyle.Render()
 	right := helpStyle.Render()
 
 	availableWidth := max(
@@ -380,10 +380,6 @@ func (m model) addMusicView(width, height int) string {
 	b.WriteString(fileList)
 	b.WriteString("\n\n")
 
-	// ----------------------------------------------
-	// Message
-	// ----------------------------------------------
-
 	if m.message != nil {
 		b.WriteString(m.message.Render())
 	}
@@ -430,10 +426,6 @@ func (m model) listMusicView(width, height int) string {
 	)
 
 	b.WriteString("\n\n")
-
-	// ----------------------------------------------
-	// Queue list
-	// ----------------------------------------------
 
 	var list strings.Builder
 

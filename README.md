@@ -33,7 +33,7 @@ AudioGo is a simple terminal-based audio player built with Go. It provides a cle
 - Go 1.24 or newer
 - GNU Make
 
-### Steps
+### Development Steps
 
 1. Clone the repository.
 
@@ -72,6 +72,7 @@ audiogo/
 - Bubble Tea
 - Bubbles
 - Lip Gloss
+- Beep
 
 ## License
 
