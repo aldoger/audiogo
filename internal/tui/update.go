@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/aldoger/audiogo/internal/utils"
@@ -36,7 +37,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.message = WarningMessage{Text: err.Error()}
 			return m, nil
 		}
-		m.currentMusic = Music{Duration: duration, Title: next}
+		durStr := utils.FormatDuration(duration)
+		m.currentMusic = filepath.Base(next)
+		m.musicDuration = durStr
 		return m, waitForSong(m.player)
 
 	case TickMsg:
@@ -85,12 +88,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						return m, nil
 					}
 					m.mode = viewPlayMusic
+					m.currentMusic = filepath.Base(music)
 					duration, err := m.player.Play(music)
 					if err != nil {
 						m.message = WarningMessage{Text: err.Error()}
 						return m, nil
 					}
-					m.currentMusic = Music{Duration: duration, Title: music}
+					durStr := utils.FormatDuration(duration)
+					m.musicDuration = durStr
 					return m, waitForSong(m.player)
 				}
 			}
@@ -160,7 +165,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.message = WarningMessage{Text: err.Error()}
 					return m, nil
 				}
-				m.currentMusic = Music{Duration: duration, Title: next}
+				durStr := utils.FormatDuration(duration)
+				m.currentMusic = filepath.Base(next)
+				m.musicDuration = durStr
 				return m, waitForSong(m.player)
 			}
 		}

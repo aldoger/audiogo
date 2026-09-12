@@ -276,10 +276,10 @@ func (m model) homeView(width, height int) string {
 	b.WriteString(titleStyle.Render("Current Track"))
 	b.WriteString("\n\n")
 
-	if m.currentMusic.Title != "" {
+	if m.currentMusic != "" {
 		b.WriteString(
 			selectedStyle.Render(
-				"♪ " + m.currentMusic.Title,
+				"♪ " + m.currentMusic,
 			),
 		)
 	} else {
@@ -483,7 +483,7 @@ func (m model) playMusicView(width, height int) string {
 
 	music := m.currentMusic
 
-	title := music.Title
+	title := music
 	if title == "" {
 		title = "No music selected"
 	}
@@ -511,11 +511,10 @@ func (m model) playMusicView(width, height int) string {
 	)
 
 	current := utils.FormatDuration(m.currentTime)
-	duration := utils.FormatDuration(music.Duration)
 
 	b.WriteString(
 		helpStyle.Render(
-			fmt.Sprintf("%s / %s", current, duration),
+			fmt.Sprintf("%s / %s", current, m.musicDuration),
 		),
 	)
 
