@@ -23,3 +23,19 @@ func waitForSong(ap *service.AudioPlayer) tea.Cmd {
 		return SongFinishedMsg{}
 	}
 }
+
+type MusicStartedMsg struct {
+	Duration time.Duration
+	Err      error
+}
+
+func playMusic(player *service.AudioPlayer, music string) tea.Cmd {
+	return func() tea.Msg {
+		duration, err := player.Play(music)
+
+		return MusicStartedMsg{
+			Duration: duration,
+			Err:      err,
+		}
+	}
+}
