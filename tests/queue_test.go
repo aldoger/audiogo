@@ -6,8 +6,8 @@ import (
 	"github.com/aldoger/audiogo/internal/service"
 )
 
-func TestNewMusicQueue(t *testing.T) {
-	q := service.NewMusicQueue()
+func TestInitMusicQueue(t *testing.T) {
+	q := service.InitMusicQueue()
 
 	if q.NodeMusicHead != nil {
 		t.Fatal("expected head to be nil")
@@ -19,7 +19,7 @@ func TestNewMusicQueue(t *testing.T) {
 }
 
 func TestEnqueue(t *testing.T) {
-	q := service.NewMusicQueue()
+	q := service.InitMusicQueue()
 
 	q.Enqueue("song1.mp3")
 
@@ -41,7 +41,7 @@ func TestEnqueue(t *testing.T) {
 }
 
 func TestEnqueueMultiple(t *testing.T) {
-	q := service.NewMusicQueue()
+	q := service.InitMusicQueue()
 
 	q.Enqueue("song1.mp3")
 	q.Enqueue("song2.mp3")
@@ -72,7 +72,7 @@ func TestEnqueueMultiple(t *testing.T) {
 }
 
 func TestDequeueEmpty(t *testing.T) {
-	q := service.NewMusicQueue()
+	q := service.InitMusicQueue()
 
 	music := q.Dequeue()
 
@@ -82,7 +82,7 @@ func TestDequeueEmpty(t *testing.T) {
 }
 
 func TestDequeueSingle(t *testing.T) {
-	q := service.NewMusicQueue()
+	q := service.InitMusicQueue()
 
 	q.Enqueue("song1.mp3")
 
@@ -102,7 +102,7 @@ func TestDequeueSingle(t *testing.T) {
 }
 
 func TestDequeueFIFO(t *testing.T) {
-	q := service.NewMusicQueue()
+	q := service.InitMusicQueue()
 
 	q.Enqueue("song1.mp3")
 	q.Enqueue("song2.mp3")
@@ -129,7 +129,7 @@ func TestDequeueFIFO(t *testing.T) {
 }
 
 func TestDequeueUntilEmpty(t *testing.T) {
-	q := service.NewMusicQueue()
+	q := service.InitMusicQueue()
 
 	q.Enqueue("song1.mp3")
 	q.Enqueue("song2.mp3")
@@ -151,7 +151,7 @@ func TestDequeueUntilEmpty(t *testing.T) {
 }
 
 func TestListMusicInQueueEmpty(t *testing.T) {
-	q := service.NewMusicQueue()
+	q := service.InitMusicQueue()
 
 	list := q.ListMusicInQueue()
 
@@ -161,7 +161,7 @@ func TestListMusicInQueueEmpty(t *testing.T) {
 }
 
 func TestListMusicInQueue(t *testing.T) {
-	q := service.NewMusicQueue()
+	q := service.InitMusicQueue()
 
 	q.Enqueue("song1.mp3")
 	q.Enqueue("song2.mp3")

@@ -31,8 +31,8 @@ func InitialModel(musicFiles *[]service.MusicFile) model {
 		options:     []string{"add", "play", "list", "search"},
 		playOptions: []string{"pause", "resume", "next"},
 		choices:     musicFiles,
-		player:      service.NewAudioPlayer(),
-		musicQueue:  service.NewMusicQueue(),
+		player:      service.InitAudioPlayer(),
+		musicQueue:  service.InitMusicQueue(),
 	}
 }
 

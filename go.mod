@@ -5,8 +5,13 @@ go 1.25.0
 require (
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/beep/v2 v2.1.1
+)
+
+require (
+	github.com/icza/bitio v1.1.0 // indirect
+	github.com/mewkiz/flac v1.0.12 // indirect
+	github.com/mewkiz/pkg v0.0.0-20230226050401-4010bf0fec14 // indirect
 )
 
 require (

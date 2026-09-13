@@ -16,7 +16,7 @@ type MusicQueue struct {
 	NodeMusicTail *NodeMusic
 }
 
-func NewMusicQueue() MusicQueue {
+func InitMusicQueue() MusicQueue {
 	return MusicQueue{
 		NodeMusicHead: nil,
 		NodeMusicTail: nil,

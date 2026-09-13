@@ -1,12 +1,24 @@
 package service
 
 import (
+	"errors"
 	"os"
 	"time"
 
-	"github.com/gopxl/beep"
+	"github.com/gopxl/beep/v2"
+	"github.com/gopxl/beep/v2/flac"
 	"github.com/gopxl/beep/v2/mp3"
 	"github.com/gopxl/beep/v2/speaker"
+	"github.com/gopxl/beep/v2/wav"
+)
+
+type AudioFormat string
+
+const (
+	MP3  AudioFormat = "mp3"
+	WAV  AudioFormat = "wav"
+	FLAC AudioFormat = "flac"
+	MIDI AudioFormat = "midi"
 )
 
 type MusicFile struct {
@@ -20,16 +32,52 @@ type AudioPlayer struct {
 	streamer   beep.StreamSeekCloser
 	sampleRate beep.SampleRate
 
+	prober *AudioProbe
+
 	done        chan struct{}
 	isPaused    bool
 	initialized bool
 }
 
-func NewAudioPlayer() *AudioPlayer {
+var formats = map[string]AudioFormat{
+	"mp3":  MP3,
+	"wav":  WAV,
+	"flac": FLAC,
+	"midi": MIDI,
+}
+
+func ParseAudioFormat(format string) (AudioFormat, bool) {
+	audioFormat, ok := formats[format]
+	return audioFormat, ok
+}
+
+func InitAudioPlayer() *AudioPlayer {
+	prober := InitAudioProbe()
+
 	return &AudioPlayer{
+		prober:      prober,
 		mixer:       &beep.Mixer{},
 		isPaused:    false,
 		initialized: false,
+	}
+}
+
+func (ap *AudioPlayer) decode(format string, file *os.File) (beep.StreamSeekCloser, beep.Format, error) {
+	audioFormat, ok := ParseAudioFormat(format)
+
+	if !ok {
+		return nil, beep.Format{}, errors.New("format unsupported")
+	}
+
+	switch audioFormat {
+	case MP3:
+		return mp3.Decode(file)
+	case WAV:
+		return wav.Decode(file)
+	case FLAC:
+		return flac.Decode(file)
+	default:
+		return nil, beep.Format{}, errors.New("format unsupported")
 	}
 }
 
@@ -39,20 +87,26 @@ func (ap *AudioPlayer) Play(file string) (time.Duration, error) {
 		return 0, err
 	}
 
-	streamer, format, err := mp3.Decode(f)
+	audioFormat, err := ap.prober.ProbeAudio(file)
+	if err != nil {
+		f.Close()
+		return 0, err
+	}
+
+	streamer, beepFormat, err := ap.decode(audioFormat, f)
 	if err != nil {
 		f.Close()
 		return 0, err
 	}
 
 	ap.streamer = streamer
-	ap.sampleRate = beep.SampleRate(format.SampleRate)
+	ap.sampleRate = beep.SampleRate(beepFormat.SampleRate)
 
 	samples := streamer.Len()
-	duration := format.SampleRate.D(samples)
+	duration := beepFormat.SampleRate.D(samples)
 
 	if !ap.initialized {
-		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+		speaker.Init(beepFormat.SampleRate, beepFormat.SampleRate.N(time.Second/10))
 
 		speaker.Play(ap.mixer)
 

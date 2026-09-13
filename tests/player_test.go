@@ -9,7 +9,7 @@ import (
 )
 
 func TestAudioPlayer(t *testing.T) {
-	player := service.NewAudioPlayer()
+	player := service.InitAudioPlayer()
 
 	fmt.Println("BEFORE PLAY")
 
@@ -33,7 +33,7 @@ func TestAudioPlayer(t *testing.T) {
 }
 
 func TestAudioDuration(t *testing.T) {
-	player := service.NewAudioPlayer()
+	player := service.InitAudioPlayer()
 
 	start := time.Now()
 
