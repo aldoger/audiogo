@@ -13,7 +13,7 @@ AudioGo is a simple terminal-based audio player built with Go. It provides a cle
 
 > **⚠️ Warning**
 >
-> AudioGo currently **only supports MP3 files**. Attempting to play other audio formats (such as WAV, FLAC, M4A, AAC, or OGG) may result in playback errors or unsupported format messages.
+> AudioGo currently **only supports MP3, WAV, OGG, FLAC files**. Attempting to play other audio formats may result in playback errors or unsupported format messages.
 
 ## Controls
 
@@ -27,6 +27,31 @@ AudioGo is a simple terminal-based audio player built with Go. It provides a cle
 > **Note:** Control keys may vary depending on future releases.
 
 ## Installation
+
+### Install
+
+To build and install AudioGo:
+
+```bash
+make install
+```
+
+The executable will be installed to:
+
+```text
+~/.local/bin/audiogo
+```
+
+Make sure `~/.local/bin` is included in your `PATH`.
+
+### Uninstall
+
+To remove AudioGo:
+
+```bash
+make uninstall
+```
+
 
 ### Prerequisites
 
