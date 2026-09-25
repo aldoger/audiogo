@@ -28,7 +28,7 @@ type model struct {
 func InitialModel(musicFiles *[]service.MusicFile) model {
 	return model{
 		mode:        viewMenu,
-		options:     []string{"add", "play", "list", "search"},
+		options:     []string{"add", "play", "list"},
 		playOptions: []string{"pause", "resume", "next"},
 		choices:     musicFiles,
 		player:      service.InitAudioPlayer(),
