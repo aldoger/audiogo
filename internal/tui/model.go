@@ -16,6 +16,7 @@ type model struct {
 	playOptions   []string
 	currentMusic  string
 	musicDuration string
+	totalDuration time.Duration
 	currentTime   time.Duration
 	choices       *[]service.MusicFile
 	menuCursor    int
@@ -37,5 +38,5 @@ func InitialModel(musicFiles *[]service.MusicFile) model {
 }
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return tickCmd() // start the tick loop once
 }

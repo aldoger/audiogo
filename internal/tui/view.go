@@ -3,20 +3,11 @@ package tui
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/aldoger/audiogo/internal/utils"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/common-nighthawk/go-figure"
 )
-
-func titleHeader() string {
-	title := strings.TrimRight(
-		figure.NewFigure("AUDIOGO", "larry3d", true).String(),
-		"\n",
-	)
-
-	return splashStyle.Render(title)
-}
 
 type viewMode int
 
@@ -494,21 +485,8 @@ func (m model) playMusicView(width, height int) string {
 
 	b.WriteString("\n\n")
 
-	progress := 0.42
-
 	barWidth := max(20, width-20)
-	filled := int(progress * float64(barWidth))
-
-	bar := strings.Repeat("━", filled)
-
-	if filled < barWidth {
-		bar += "╺"
-	}
-
-	bar += strings.Repeat(
-		"━",
-		max(0, barWidth-filled-1),
-	)
+	bar := progressBar(m.currentTime, m.totalDuration, barWidth)
 
 	current := utils.FormatDuration(m.currentTime)
 
@@ -517,15 +495,9 @@ func (m model) playMusicView(width, height int) string {
 			fmt.Sprintf("%s / %s", current, m.musicDuration),
 		),
 	)
-
 	b.WriteString("\n")
-
 	b.WriteString(
-		lipgloss.PlaceHorizontal(
-			width-4,
-			lipgloss.Center,
-			bar,
-		),
+		lipgloss.PlaceHorizontal(width-4, lipgloss.Center, bar),
 	)
 
 	b.WriteString("\n\n")
@@ -610,4 +582,32 @@ func truncateString(s string, maxWidth int) string {
 	}
 
 	return s[:maxWidth-3] + "..."
+}
+
+func progressBar(current, total time.Duration, width int) string {
+	if width < 3 {
+		width = 3
+	}
+
+	ratio := 0.0
+	if total > 0 {
+		ratio = float64(current) / float64(total)
+	}
+
+	if ratio < 0 {
+		ratio = 0
+	}
+	if ratio > 1 {
+		ratio = 1
+	}
+
+	filled := int(ratio * float64(width))
+	empty := width - filled
+
+	bar := selectedStyle.Render(strings.Repeat("━", filled))
+	if empty > 0 {
+		bar += helpStyle.Render("╺" + strings.Repeat("━", empty-1))
+	}
+
+	return bar
 }

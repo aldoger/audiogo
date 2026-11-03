@@ -3,7 +3,6 @@ package tui
 import (
 	"fmt"
 	"path/filepath"
-	"time"
 
 	"github.com/aldoger/audiogo/internal/utils"
 	tea "github.com/charmbracelet/bubbletea"
@@ -41,12 +40,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case MusicStartedMsg:
 		if msg.Err != nil {
-			m.message = WarningMessage{
-				Text: msg.Err.Error(),
-			}
+			m.message = WarningMessage{Text: msg.Err.Error()}
 			return m, nil
 		}
 
+		m.totalDuration = msg.Duration
 		m.musicDuration = utils.FormatDuration(msg.Duration)
 
 		return m, waitForSong(m.player)
@@ -94,6 +92,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					}
 					m.mode = viewPlayMusic
 					m.currentMusic = filepath.Base(music)
+					m.currentTime = 0
 					return m, playMusic(m.player, music)
 				}
 			}
@@ -134,8 +133,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case viewPlayMusic:
-			ticker := time.NewTicker(100 * time.Millisecond)
-			defer ticker.Stop()
 
 			switch msg.String() {
 
