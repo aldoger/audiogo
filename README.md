@@ -21,7 +21,11 @@ AudioGo is a simple terminal-based audio player built with Go. It provides a cle
 |-----|--------|
 | ↑ / ↓ | Navigate through the file list |
 | Enter | Play selected audio |
-| Space | Pause / Resume playback |
+| p | Pause  |
+| r | Resume  |
+| b | Back  |
+| -> | Forward 10 second audio  |
+| <- | Backward 10 second audio  |
 | q | Quit the application |
 
 > **Note:** Control keys may vary depending on future releases.
@@ -83,12 +87,11 @@ make run
 
 ```
 audiogo/
-├── cmd/          # Application entry point
-├── internal/     # Internal packages
-├── assets/       # Audio or static assets (optional)
-├── Makefile
+├── internal/     # Application entry point
+├── tests/        # Test programs
+├── Makefile      # Build & Installation script
 ├── go.mod
-└── README.md
+└── main.go       # Main program 
 ```
 
 ## Built With
