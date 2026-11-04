@@ -35,7 +35,6 @@ type AudioPlayer struct {
 	prober *AudioProbe
 
 	done        chan struct{}
-	isPaused    bool
 	initialized bool
 }
 
@@ -57,7 +56,6 @@ func InitAudioPlayer() *AudioPlayer {
 	return &AudioPlayer{
 		prober:      prober,
 		mixer:       &beep.Mixer{},
-		isPaused:    false,
 		initialized: false,
 	}
 }
@@ -161,7 +159,6 @@ func (ap *AudioPlayer) Pause() {
 
 	speaker.Lock()
 	ap.ctrl.Paused = true
-	ap.isPaused = true
 	speaker.Unlock()
 }
 
@@ -172,12 +169,11 @@ func (ap *AudioPlayer) Resume() {
 
 	speaker.Lock()
 	ap.ctrl.Paused = false
-	ap.isPaused = false
 	speaker.Unlock()
 }
 
 func (ap *AudioPlayer) IsPaused() bool {
-	return ap.isPaused
+	return ap.ctrl.Paused
 }
 
 func (ap *AudioPlayer) IsInitialized() bool {
@@ -190,4 +186,36 @@ func (ap *AudioPlayer) Stop() {
 	speaker.Unlock()
 
 	ap.ctrl = nil
+}
+
+func (ap *AudioPlayer) Back() error {
+	if ap.streamer == nil {
+		return errors.New("no audio currently playing")
+	}
+
+	speaker.Lock()
+	defer speaker.Unlock()
+
+	current := ap.streamer.Position()
+	offset := ap.sampleRate.N(10 * time.Second)
+
+	target := max(current-offset, 0)
+
+	return ap.streamer.Seek(target)
+}
+
+func (ap *AudioPlayer) Forward() error {
+	if ap.streamer == nil {
+		return errors.New("no audio currently playing")
+	}
+
+	speaker.Lock()
+	defer speaker.Unlock()
+
+	current := ap.streamer.Position()
+	offset := ap.sampleRate.N(10 * time.Second)
+
+	target := min(current+offset, ap.streamer.Len())
+
+	return ap.streamer.Seek(target)
 }

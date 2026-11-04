@@ -130,7 +130,7 @@ func (m model) headerView() string {
 func (m model) menuView() string {
 	var b strings.Builder
 
-	b.WriteString(titleStyle.Render("Library"))
+	b.WriteString(titleStyle.Render("Commands"))
 	b.WriteString("\n\n")
 
 	for i, option := range m.options {
@@ -504,7 +504,7 @@ func (m model) playMusicView(width, height int) string {
 
 	playback := "⏸ Pause"
 
-	if m.player != nil && m.player.IsPaused() {
+	if m.player != nil && m.player.IsInitialized() && m.player.IsPaused() {
 		playback = "▶ Resume"
 	}
 

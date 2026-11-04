@@ -136,6 +136,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			switch msg.String() {
 
+			case "right":
+				m.player.Forward()
+
+			case "left":
+				m.player.Back()
+
 			case "b":
 				m.mode = viewMenu
 				m.menuCursor = 0
