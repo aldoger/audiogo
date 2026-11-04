@@ -16,6 +16,7 @@ build: check-go
 install: build
 	mkdir -p ~/.local/bin
 	cp bin/audiogo ~/.local/bin/audiogo
+	rm -rf bin/
 
 uninstall:
 	rm -f ~/.local/bin/audiogo
