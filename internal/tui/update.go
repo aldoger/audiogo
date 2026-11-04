@@ -145,7 +145,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.message = InfoMessage{Text: "Music pause!"}
 				m.player.Pause()
 
-			case "m":
+			case "r":
 				m.message = InfoMessage{Text: "Resume..."}
 				m.player.Resume()
 
