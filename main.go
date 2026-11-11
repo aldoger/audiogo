@@ -10,19 +10,21 @@ import (
 )
 
 func main() {
-
-	musicDir, err := utils.DirExist()
+	// Check & initialize music directory
+	musicDir, err := utils.MusicDirExist()
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 		os.Exit(1)
 	}
 
+	// Get music files
 	musicFiles, err := utils.ListMusic(musicDir)
 	if musicFiles == nil && err != nil {
 		log.Fatalf("Error: %s", err.Error())
 		os.Exit(1)
 	}
 
+	// Start Program
 	p := tea.NewProgram(tui.InitialModel(&musicFiles))
 	if _, err := p.Run(); err != nil {
 		log.Fatalf("Error: %s", err.Error())

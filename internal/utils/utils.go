@@ -10,7 +10,7 @@ import (
 	"github.com/aldoger/audiogo/internal/service"
 )
 
-func DirExist() (string, error) {
+func MusicDirExist() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", err

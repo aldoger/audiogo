@@ -72,7 +72,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				switch m.options[m.menuCursor] {
 				case ADD:
 					// check for another music if added in directory
-					dirPath, _ := utils.DirExist()
+					dirPath, _ := utils.MusicDirExist()
 					checkMusic, _ := utils.ListMusic(dirPath)
 					m.choices = &checkMusic
 					m.message = nil

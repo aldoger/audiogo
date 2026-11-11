@@ -22,8 +22,8 @@ const (
 )
 
 type MusicFile struct {
-	Title string
-	Path  string
+	Title string `json:"title"`
+	Path  string `json:"path"`
 }
 
 type AudioPlayer struct {
