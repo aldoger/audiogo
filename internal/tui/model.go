@@ -24,9 +24,10 @@ type model struct {
 	message       ModelMessage
 	player        *service.AudioPlayer
 	musicQueue    service.MusicQueue
+	playlists     *service.PlaylistData
 }
 
-func InitialModel(musicFiles *[]service.MusicFile) model {
+func InitialModel(musicFiles *[]service.MusicFile, playlists *service.PlaylistData) model {
 	return model{
 		mode:        viewMenu,
 		options:     []string{"add", "play", "list"},
@@ -34,6 +35,7 @@ func InitialModel(musicFiles *[]service.MusicFile) model {
 		choices:     musicFiles,
 		player:      service.InitAudioPlayer(),
 		musicQueue:  service.InitMusicQueue(),
+		playlists:   playlists,
 	}
 }
 
